@@ -16,7 +16,7 @@ updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 channelAwe, servername, logchannel = 1006779252215132161, 723078810702184448, 1007170918549819412
 uColor, red, green, blue = 0xffffff, 0xf50101, 0x01f501, 0x02aefd
-updatesjson, maintenancesjson, incidentsjson = './updates.json', './maintenances.json', './incidents.json'
+updatesjson, maintenancesjson, incidentsjson = './config/updates.json', './config/maintenances.json', './config/incidents.json'
 updateList, maintenanceList, incidentsList = [],[],[]
 prevUpdate, prevMaintenance, prevIncidents = '','',''
 
