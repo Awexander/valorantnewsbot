@@ -17,7 +17,6 @@ updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 channelAwe, servername, logchannel = 1006779252215132161, 723078810702184448, 1007170918549819412
 uColor, red, green, blue = 0xffffff, 0xf50101, 0x01f501, 0x02aefd
-path, updatesjson, maintenancesjson, incidentsjson = Path('config/updates.json'), 'config/updates.json', 'config/maintenances.json', 'config/incidents.json'
 prevUpdate, prevMaintenance, prevIncidents = '','',''
 
 description: str= ''' valorant game updates, server status and scheduled maintenance '''
