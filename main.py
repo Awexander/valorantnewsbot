@@ -1,15 +1,13 @@
 
-
-from ast import main
+#! /home/awexander/Sync/valorant-scraper/discordbot/valorantnewsbot/.venv/bin/python
 import asyncio
-from dataclasses import field
-from operator import truediv
 import discord
 from discord.ext import commands, tasks
 from datetime import datetime
 import requests
 import json
 from pathlib import Path
+import os
 
 intents = discord.Intents.default()
 intents.members = True
@@ -174,7 +172,8 @@ async def _sendNotification(message):
 
 async def _readjson():
     try:
-        with open('config/updates.json', 'r') as w:
+        path = os.getcwd()
+        with open(path +'/config/updates.json', 'r') as w:
             data = json.loads(w.read())
         return data
     except Exception as error:
@@ -186,12 +185,13 @@ async def _getPatch(data):
 
 async def _appendData(updateData, maintenanceData, incidenctData):
     try:
+        path = os.getcwd()
         data = {           
             "updates": updateData,
             "maintenances": maintenanceData,
             "incidents": incidenctData
         }
-        with open('config/updates.json', 'w') as w:
+        with open(path,'/config/updates.json', 'w') as w:
             w.write(json.dumps(data, indent=4, separators=[',',':']))
     except Exception as error:
         await _log('[ERROR]',f'error appending updates data \n {error}')

@@ -1,6 +1,8 @@
 
 import json
+import os
 
-update = {'test': 'test data', 'second': 'second'}
-with open('config/updates.json', 'w') as upjson:
-    upjson.write(json.dumps(update, indent=4, separators=[',',':']))
+path = os.getcwd()
+print(path)
+with open(path + '/config/updates.json', 'r') as w:
+    print(w.read())
