@@ -1,10 +1,12 @@
-[
-    {
+{
+    "updates":{
         "banner_url":"https://images.contentstack.io/v3/assets/bltb6530b271fddd0b1/bltd2966b538cc3dfd8/62f2c5ba145e5527a2b48a5e/REAVER_REDIRECT_THUMB.jpg",
         "category":"game_updates",
         "date":"2022-08-10T15:00:00.000Z",
         "external_link":"https://www.youtube.com/shorts/WLWZP6eRkiA",
         "title":"RITUAL COMPLETE // Reaver Skinline Trailer - VALORANT",
         "url":"https://playvalorant.com/en-us/news/game-updates/ritual-complete-reaver-skinline-trailer-valorant/"
-    }
-]
+    },
+    "maintenances":[],
+    "incidents":[]
+}
