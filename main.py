@@ -96,12 +96,12 @@ async def uptime(ctx):
     upTime = await _getTimeEllapsed(upSeconds)
     connTime = await _getTimeEllapsed(connSeconds)
 
-    return await _log('[SERVER]',f"[SERV TIME] {upTime} \n[BOT TIME] {connTime}")
+    return await _log('[SERVER]',f"[SERV TIME]\t {upTime} \n[BOT TIME]\t {connTime}")
 
 @bot.command()
 async def update(ctx):
     message = await _readjson()
-    return await _log('[SERVER]', f"Latest update: {message[0]['title']} \n Updated at: {message[0]['date']}")
+    return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
 
 
 @tasks.loop(seconds=20)
@@ -210,7 +210,7 @@ async def _getTimeEllapsed(timeSeconds):
     if hours:
         upTime.append('{:02}H'.format(int(hours)))
     if minutes:
-        upTime.append('{:02}M'.format(int(minutes)))
+        upTime.append('{:02}m'.format(int(minutes)))
     if seconds:
         upTime.append('{:02}s'.format(int(seconds)))
 
