@@ -28,14 +28,11 @@ bot = commands.Bot(command_prefix='--', description=description, intents=intents
 isNeed_Notification = False
 startTime = datetime.now()
 connectionTime = datetime.now()
-disconnectTime = datetime.now()
 
 @bot.event 
 async def on_disconnect():
-    global disconnectTime 
     disconnectTime = datetime.now()
-    dctime = await _getTimeEllapsed(disconnectTime)
-    await _log('[BOT]',f'disconnected since {dctime}')
+    await _log('[BOT]',f'disconnected since {disconnectTime}')
 
 @bot.event
 async def on_resumed():
@@ -93,8 +90,8 @@ async def uptime(ctx):
     upSeconds = datetime.now() - startTime
     connSeconds = datetime.now() - connectionTime
     
-    upTime = await _getTimeEllapsed(upSeconds)
-    connTime = await _getTimeEllapsed(connSeconds)
+    upTime = await _getTimeElapsed(upSeconds)
+    connTime = await _getTimeElapsed(connSeconds)
 
     return await _log('[SERVER]',f"[SERV TIME]\t {upTime} \n[BOT TIME]\t {connTime}")
 
@@ -199,7 +196,7 @@ async def _appendData(updateData, maintenanceData, incidenctData):
     except Exception as error:
         await _log('[ERROR]',f'error appending updates data \n {error}')
         
-async def _getTimeEllapsed(timeSeconds):
+async def _getTimeElapsed(timeSeconds):
     minutes, seconds = divmod(timeSeconds.total_seconds(), 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
