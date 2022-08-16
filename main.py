@@ -6,7 +6,6 @@ from discord.ext import commands, tasks
 from datetime import datetime
 import requests
 import json
-from pathlib import Path
 import os
 
 intents = discord.Intents.default()
@@ -25,11 +24,11 @@ bot = commands.Bot(command_prefix='--', description=description, intents=intents
 isNeed_Notification = False
 startTime = datetime.now()
 connectionTime = datetime.now()
-
+disconnetTime = datetime.now()
 @bot.event 
 async def on_disconnect():
-    disconnectTime = datetime.now()
-    await _log('[BOT]',f'disconnected since {disconnectTime}')
+    global disconnetTime
+    disconnetTime = datetime.now()
 
 @bot.event
 async def on_resumed():
@@ -39,7 +38,7 @@ async def on_resumed():
 
 @bot.event
 async def on_ready():
-    global connectionTime, prevUpdate, prevMaintenance, prevIncidents
+    global connectionTime, disconnetTime, prevUpdate, prevMaintenance, prevIncidents
     connectionTime = datetime.now()
     await bot.change_presence(
         activity=discord.Activity(
@@ -64,18 +63,30 @@ async def on_ready():
         await _log('[ERROR]',f'failed to load previous incidents details \n {error}')
 
     await asyncio.sleep(1)
-    await _log('[BOT]',f'bot is online')
+    dcTime = disconnetTime.strftime("%A %m/%d/%Y, %H:%M:%S")
+    await _log('[BOT]',f'bot is online, \n disconnected since {dcTime}')
     loop.start()
+
+@bot.event
+async def on_command(ctx):
+    if ctx.author == bot.user:
+        return
+
+    if isinstance(ctx.channel, discord.DMChannel):
+        return await _log('[BOT]',f"got a direct message from <@{ctx.author.id}> \n '{ctx.message.content}'")
+    
+    await ctx.message.delete(delay=1)
 
 @bot.event
 async def on_message(message):
     await bot.process_commands(message)
     if message.author == bot.user:
         return
-    
+
     if isinstance(message.channel, discord.DMChannel):
         return await _log('[BOT]',f"got a direct message from <@{message.author.id}> \n '{message.content}'")
-
+    
+    #await message.delete(delay=1)
     #return await message.channel.send(f'[TEST] test reference', reference=message, allowed_mentions= discord.AllowedMentions(replied_user=False))
 
 @bot.command()
@@ -106,7 +117,8 @@ async def loop():
     
     try:   
         latestPatch = await _getPatch(updateData)
-        if latestPatch != prevUpdate:
+        #print(f'{latestPatch}, {prevUpdate}')
+        if latestPatch != prevUpdate and latestPatch != None:
             prevUpdate = latestPatch
             if updateData['external_link'] != None:
                 link = updateData['external_link']
@@ -190,7 +202,7 @@ async def _appendData(updateData, maintenanceData, incidenctData):
             "maintenances": maintenanceData,
             "incidents": incidenctData
         }
-        with open(path,'/config/updates.json', 'w') as w:
+        with open(path+'/config/updates.json', 'w') as w:
             w.write(json.dumps(data, indent=4, separators=[',',':']))
     except Exception as error:
         await _log('[ERROR]',f'error appending updates data \n {error}')
@@ -202,13 +214,13 @@ async def _getTimeElapsed(timeSeconds):
 
     upTime = []
     if days: 
-        upTime.append('{:01}D'.format(int(days)))
+        upTime.append('{:01}Days'.format(int(days)))
     if hours:
-        upTime.append('{:02}H'.format(int(hours)))
+        upTime.append('{:02}Hours'.format(int(hours)))
     if minutes:
-        upTime.append('{:02}m'.format(int(minutes)))
+        upTime.append('{:02}minutes'.format(int(minutes)))
     if seconds:
-        upTime.append('{:02}s'.format(int(seconds)))
+        upTime.append('{:02}seconds'.format(int(seconds)))
 
     return ':'.join(upTime)
 
