@@ -4,7 +4,7 @@ import json
 
 class getmatchinfo():
     def __init__(self):
-        self.match = self._latestmatch(map=None, mode=None, roundWon=None, roundLost=None, headshot=None, kda=None, adr=None)
+        self.match = self._latestmatch(map=None, mode=None, roundWon=None, roundLost=None, agent=None, headshot=None, kda=None, adr=None)
         pass
         
     async def getmatches(self, region, name, tag, timeout=30):
@@ -24,6 +24,7 @@ class getmatchinfo():
             self.match.gamemode = await self._getGameMode()
             self.lastmatch = await self._getLatestMatch()
             self.match.roundWon, self.match.roundLost = await self._getMatchResult()
+            self.match.agent = await self._getAgent()
             self.match.headshot = await self._getHeadshot()
             self.match.kda = await self._getkda()
             self.match.adr = await self._getadr()
@@ -49,6 +50,9 @@ class getmatchinfo():
         result =  self.matches['data'][0]['teams'][self.team.lower()]
         return result['rounds_won'], result['rounds_lost']
 
+    async def _getAgent(self):
+        return self.lastmatch['character']
+
     async def _getLatestMatch(self):
         for player in self.matches['data'][0]['players']['all_players']:
             if player['puuid'] == self.puuid:
@@ -67,11 +71,12 @@ class getmatchinfo():
         return self.lastmatch['damage_made'] / self.matches['data'][0]['metadata']['rounds_played']
     
     class _latestmatch():
-        def __init__(self, map, mode, roundWon, roundLost, headshot, kda, adr):
+        def __init__(self, map, mode, roundWon, roundLost, agent, headshot, kda, adr):
             self.map = map
             self.gamemode = mode
             self.roundWon = roundWon
             self.roundLost = roundLost
+            self.agent = agent
             self.headshot = headshot
             self.kda = kda
             self.adr = adr
