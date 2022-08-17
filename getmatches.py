@@ -5,10 +5,11 @@ import json
 class getmatchinfo():
     def __init__(self):
         self.match = self._latestmatch(map=None, mode=None, roundWon=None, roundLost=None, agent=None, headshot=None, kda=None, adr=None)
+        self.region = 'ap'
         pass
         
-    async def getmatches(self, region, name, tag, timeout=30):
-        url = f'https://api.henrikdev.xyz/valorant/v3/matches/{region}/{name}/{tag}'
+    async def getmatches(self, name, tag, timeout=30):
+        url = f'https://api.henrikdev.xyz/valorant/v3/matches/{self.region}/{name}/{tag}'
         puuid_url = f'https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}?force=true'
 
         try:
