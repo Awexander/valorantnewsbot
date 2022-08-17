@@ -1,16 +1,18 @@
 
-#! /home/awexander/Sync/valorant-scraper/discordbot/valorantnewsbot/.venv/bin/python
 import asyncio
 import discord
 from discord.ext import commands, tasks
 from datetime import datetime
+import getmatches as match
 import requests
 import json
 import os
 
+matchupdate = match.getmatchinfo()
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
+
 
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
@@ -67,7 +69,7 @@ async def on_ready():
     await _log('[BOT]',f'bot is online, \n disconnected since {dcTime}')
     loop.start()
 
-@bot.event
+@bot.after_invoke
 async def on_command(ctx):
     if ctx.author == bot.user:
         return
@@ -86,9 +88,6 @@ async def on_message(message):
     if isinstance(message.channel, discord.DMChannel):
         return await _log('[BOT]',f"got a direct message from <@{message.author.id}> \n '{message.content}'")
     
-    #await message.delete(delay=1)
-    #return await message.channel.send(f'[TEST] test reference', reference=message, allowed_mentions= discord.AllowedMentions(replied_user=False))
-
 @bot.command()
 async def id(ctx):
     return await _log('[SERVER]',f'Channel ID: {ctx.channel.id}')
@@ -108,6 +107,14 @@ async def update(ctx):
     message = await _readjson()
     return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
 
+@bot.command()
+async def lastmatch(ctx):
+    result , error= await matchupdate.getmatches('ap', 'awexander', '007')
+    if result is True:
+        latestmatch: str=f"Map: {matchupdate.match.map}, \t \t Mode: {matchupdate.match.gamemode} \n Score: {matchupdate.match.roundWon}-{matchupdate.match.roundLost}, Agent: {matchupdate.match.agent} \n Headshot: {int(round(matchupdate.match.headshot))} \n K/D: {float(round(matchupdate.match.kda, 2))} \n ADR: {int(round(matchupdate.match.adr))}"
+        await _log('[SERVER]', f'{latestmatch}')
+    else:
+        await _log('[ERROR]', f'error loading latest match data \n {error}')
 
 @tasks.loop(seconds=20)
 async def loop():
@@ -224,4 +231,4 @@ async def _getTimeElapsed(timeSeconds):
 
     return ':'.join(upTime)
 
-bot.run('BOT-TOKEN')
+bot.run('BOT_TOKEN')
