@@ -14,6 +14,7 @@ intents.members = True
 intents.messages = True
 
 
+
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 servername, logchannel = 723078810702184448, 1007170918549819412
@@ -109,7 +110,7 @@ async def update(ctx):
 
 @bot.command()
 async def lastmatch(ctx):
-    result , error= await matchupdate.getmatches('ap', 'awexander', '007')
+    result , error= await matchupdate.getmatches('awexander', '007')
     if result is True:
         latestmatch: str=f"Map: {matchupdate.match.map}, \t \t Mode: {matchupdate.match.gamemode} \n Score: {matchupdate.match.roundWon}-{matchupdate.match.roundLost}, Agent: {matchupdate.match.agent} \n Headshot: {int(round(matchupdate.match.headshot))} \n K/D: {float(round(matchupdate.match.kda, 2))} \n ADR: {int(round(matchupdate.match.adr))}"
         await _log('[SERVER]', f'{latestmatch}')
@@ -231,4 +232,4 @@ async def _getTimeElapsed(timeSeconds):
 
     return ':'.join(upTime)
 
-bot.run('BOT_TOKEN')
+bot.run(BOT_TOKEN)
