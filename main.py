@@ -114,6 +114,7 @@ async def lastmatch(ctx, *,status):
     if result is True:
         await _log(
         '[REPORT]', 
+        message=f'Match Report: **{status.upper()}**',
         map=matchupdate.match.map, 
         mode=matchupdate.match.gamemode, 
         score=f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
@@ -199,6 +200,7 @@ async def _log(code, message='', map='', mode='', score='', agent='', headshot='
     else:
         embed = discord.Embed(
             title=code,
+            description=message,
             color=uColor,
         )
         embed.add_field(name='MAP', value=map, inline=True)
