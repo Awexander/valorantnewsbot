@@ -14,7 +14,7 @@ intents.messages = True
 
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
-channelAwe, servername, logchannel = 1006779252215132161, 723078810702184448, 1007170918549819412
+servername, logchannel = 723078810702184448, 1007170918549819412
 uColor, red, green, blue = 0xffffff, 0xf50101, 0x01f501, 0x02aefd
 prevUpdate, prevMaintenance, prevIncidents = '','',''
 
@@ -214,14 +214,14 @@ async def _getTimeElapsed(timeSeconds):
 
     upTime = []
     if days: 
-        upTime.append('{:01}Days'.format(int(days)))
+        upTime.append('{:01}D '.format(int(days)))
     if hours:
-        upTime.append('{:02}Hours'.format(int(hours)))
+        upTime.append('{:02}H '.format(int(hours)))
     if minutes:
-        upTime.append('{:02}minutes'.format(int(minutes)))
+        upTime.append('{:02}M'.format(int(minutes)))
     if seconds:
-        upTime.append('{:02}seconds'.format(int(seconds)))
+        upTime.append('{:02}S'.format(int(seconds)))
 
     return ':'.join(upTime)
 
-bot.run('NzIzMDkwNTg1MDE5NDgyMTU1.GM8W1H.DqsAL1RM5-1tXehKSgGa3gfD-cAyubStdXj6dk')
+bot.run('BOT-TOKEN')
