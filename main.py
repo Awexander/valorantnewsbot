@@ -20,7 +20,7 @@ prevUpdate, prevMaintenance, prevIncidents = '','',''
 
 description: str= ''' valorant game updates, server status and scheduled maintenance '''
 
-bot = commands.Bot(command_prefix='--', description=description, intents=intents)
+bot = commands.Bot(command_prefix='.', description=description, intents=intents)
 isNeed_Notification = False
 startTime = datetime.now()
 connectionTime = datetime.now()
