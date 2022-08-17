@@ -14,14 +14,13 @@ intents.members = True
 intents.messages = True
 
 
-
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 servername, logchannel = 723078810702184448, 1007170918549819412
 uColor, red, green, blue = 0xffffff, 0xf50101, 0x01f501, 0x02aefd
 prevUpdate, prevMaintenance, prevIncidents = '','',''
 
-description: str= ''' valorant game updates, server status and scheduled maintenance '''
+description: str= ''' valorant game updates, server status and scheduled maintenance ''' 
 
 bot = commands.Bot(command_prefix='.', description=description, intents=intents)
 isNeed_Notification = False
@@ -109,11 +108,20 @@ async def update(ctx):
     return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
 
 @bot.command()
-async def lastmatch(ctx):
-    result , error= await matchupdate.getmatches('awexander', '007')
+async def lastmatch(ctx, *,status):
+    nametag = status.split('#')
+    result , error= await matchupdate.getmatches(nametag[0], nametag[1])
     if result is True:
-        latestmatch: str=f"Map: {matchupdate.match.map}, \t \t Mode: {matchupdate.match.gamemode} \n Score: {matchupdate.match.roundWon}-{matchupdate.match.roundLost}, Agent: {matchupdate.match.agent} \n Headshot: {int(round(matchupdate.match.headshot))} \n K/D: {float(round(matchupdate.match.kda, 2))} \n ADR: {int(round(matchupdate.match.adr))}"
-        await _log('[SERVER]', f'{latestmatch}')
+        await _log(
+        '[REPORT]', 
+        map=matchupdate.match.map, 
+        mode=matchupdate.match.gamemode, 
+        score=f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
+        agent=matchupdate.match.agent,
+        headshot=int(round(matchupdate.match.headshot)),
+        kda=matchupdate.match.kda,
+        adr=int(round(matchupdate.match.adr))
+        )
     else:
         await _log('[ERROR]', f'error loading latest match data \n {error}')
 
@@ -170,19 +178,38 @@ async def _requestsupdates(url):
        await _log('[ERROR]',f'requests failed: \n{error}')
 
 
-async def _log(code, message):
+async def _log(code, message='', map='', mode='', score='', agent='', headshot='', kda=[], adr=''):
     global uColor, red, green
     channel = bot.get_channel(logchannel)
     if code == '[ERROR]':
         uColor = red
     elif code == '[BOT]':
         uColor = green
-    elif code == '[SERVER]':
+    elif code == '[SERVER]' or '[REPORT]':
         uColor = blue
     else:
         uColor = 0xffffff
 
-    embed = discord.Embed(title=code,description=message, color=uColor)
+    if code != '[REPORT]':
+        embed = discord.Embed(
+            title=code,
+            description=message, 
+            color=uColor
+        )
+    else:
+        embed = discord.Embed(
+            title=code,
+            color=uColor,
+        )
+        embed.add_field(name='MAP', value=map, inline=True)
+        embed.add_field(name='MODE', value=mode, inline=True)
+        embed.add_field(name='SCORE', value=score, inline=True)
+        embed.add_field(name='AGENT', value=agent, inline=True)
+        embed.add_field(name='K/D', value=float(round(kda[3],2)), inline=True)
+        embed.add_field(name='KDA', value=f'K:{kda[0]} D:{kda[1]} A:{kda[2]}', inline=True)
+        embed.add_field(name='ADR', value=adr, inline=True)
+        embed.add_field(name='HS%', value=f'{headshot}%', inline=True)
+        
     await channel.send(embed=embed)
 
 async def _sendNotification(message):
