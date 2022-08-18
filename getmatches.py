@@ -28,7 +28,7 @@ class getmatchinfo():
                     if self.matches is None:
                         return None, "didn't play any competitive yet"
 
-                    #with open('config/fullmatches.json', 'w') as fm:
+                    #with open('data/fullmatches.json', 'w') as fm:
                         #json.dump(self.matches, fm, indent=4, separators=[',',':'])
             
             self.match.map = await self._getmap()

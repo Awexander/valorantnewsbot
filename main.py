@@ -220,7 +220,7 @@ async def _sendNotification(message):
 async def _readjson():
     try:
         path = os.getcwd()
-        with open(path +'/config/updates.json', 'r') as w:
+        with open(path +'/data/updates.json', 'r') as w:
             data = json.loads(w.read())
         return data
     except Exception as error:
@@ -238,7 +238,7 @@ async def _appendData(updateData, maintenanceData, incidenctData):
             "maintenances": maintenanceData,
             "incidents": incidenctData
         }
-        with open(path+'/config/updates.json', 'w') as w:
+        with open(path+'/data/updates.json', 'w') as w:
             w.write(json.dumps(data, indent=4, separators=[',',':']))
     except Exception as error:
         await _log('[ERROR]',f'error appending updates data \n {error}')
