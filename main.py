@@ -114,7 +114,7 @@ async def match(ctx, *,status):
     if result is True:
         await _log(
         '[REPORT]', 
-        message=f'Match Report: **{status.upper()}**',
+        message=f'**{status.upper()}** \n Rank: {matchupdate.match.rank}',
         map=matchupdate.match.map, 
         mode=matchupdate.match.gamemode, 
         score=f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
