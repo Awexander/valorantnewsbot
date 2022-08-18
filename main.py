@@ -108,7 +108,7 @@ async def update(ctx):
     return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
 
 @bot.command()
-async def lastmatch(ctx, *,status):
+async def match(ctx, *,status):
     nametag = status.split('#')
     result , error= await matchupdate.getmatches(nametag[0], nametag[1])
     if result is True:
@@ -190,19 +190,13 @@ async def _log(code, message='', map='', mode='', score='', agent='', headshot='
         uColor = blue
     else:
         uColor = 0xffffff
-
-    if code != '[REPORT]':
-        embed = discord.Embed(
-            title=code,
-            description=message, 
-            color=uColor
-        )
-    else:
-        embed = discord.Embed(
-            title=code,
-            description=message,
-            color=uColor,
-        )
+    
+    embed = discord.Embed(
+        title=code,
+        description=message, 
+        color=uColor
+    )
+    if code == '[REPORT]':
         embed.add_field(name='MAP', value=map, inline=True)
         embed.add_field(name='MODE', value=mode, inline=True)
         embed.add_field(name='SCORE', value=score, inline=True)
