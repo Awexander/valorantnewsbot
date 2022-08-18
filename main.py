@@ -126,6 +126,11 @@ async def match(ctx, *,status):
     else:
         await _log('[ERROR]', f'error loading latest match data \n {error}')
 
+@bot.command()
+async def region(ctx, *, region):
+    matchupdate.region = region
+    return await _log('[SERVER]', f'Changed region to: {region}')
+    
 @tasks.loop(seconds=20)
 async def loop():
     global prevUpdate, prevMaintenance, prevIncidents, isNeed_Notification
