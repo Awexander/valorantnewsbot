@@ -76,7 +76,7 @@ class getmatchinfo():
 
     async def _getkda(self):
         damage = self.lastmatch['stats']
-        return [damage['kills'], damage['deaths'], damage['assists'], float(round(damage['kills'] / damage['deaths']))]
+        return [damage['kills'], damage['deaths'], damage['assists'], float(round(damage['kills'] / damage['deaths'],1))]
     
     async def _getadr(self):
         return self.lastmatch['damage_made'] / self.matches['data'][self.matchIndex]['metadata']['rounds_played']
