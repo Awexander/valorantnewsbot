@@ -207,7 +207,7 @@ async def _log(code, message='', map='', mode='', score='', agent='', headshot='
         embed.add_field(name='MODE', value=mode, inline=True)
         embed.add_field(name='SCORE', value=score, inline=True)
         embed.add_field(name='AGENT', value=agent, inline=True)
-        embed.add_field(name='K/D', value=float(round(kda[3],2)), inline=True)
+        embed.add_field(name='K/D', value=float(kda[3]), inline=True)
         embed.add_field(name='KDA', value=f'K:{kda[0]} D:{kda[1]} A:{kda[2]}', inline=True)
         embed.add_field(name='ADR', value=adr, inline=True)
         embed.add_field(name='HS%', value=f'{headshot}%', inline=True)
