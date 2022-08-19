@@ -13,7 +13,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
 
-
+BOT_TOKEN = 'NzIzMDkwNTg1MDE5NDgyMTU1.G5syz5.jFpXyiaPJwWPt9s6snReL8ytG3pkZNTaLL0KcU'
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 servername, logchannel = 723078810702184448, 1007170918549819412
@@ -87,7 +87,7 @@ async def on_message(message):
 
     if isinstance(message.channel, discord.DMChannel):
         return await _log('[BOT]',f"got a direct message from <@{message.author.id}> \n '{message.content}'")
-    
+
 @bot.command()
 async def id(ctx):
     return await _log('[SERVER]',f'Channel ID: {ctx.channel.id}')
@@ -107,14 +107,19 @@ async def update(ctx):
     message = await _readjson()
     return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
 
+@bot.listen()
+async def on_command_error(ctx, error):
+    return await _log('[ERROR]', f'{error}')
+
 @bot.command()
-async def match(ctx, *,status):
-    nametag = status.split('#')
+async def lastmatch(ctx, *,valorantid):
+    
+    nametag = valorantid.split('#')
     result , error= await matchupdate.getmatches(nametag[0], nametag[1])
     if result is True:
         await _log(
         '[REPORT]', 
-        message=f'**{status.upper()}** \n Rank: {matchupdate.match.rank}',
+        message=f'**{valorantid.upper()}** \n Rank: {matchupdate.match.rank}',
         map=matchupdate.match.map, 
         mode=matchupdate.match.gamemode, 
         score=f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
