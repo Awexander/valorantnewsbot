@@ -13,7 +13,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
 
-BOT_TOKEN = 'NzIzMDkwNTg1MDE5NDgyMTU1.G5syz5.jFpXyiaPJwWPt9s6snReL8ytG3pkZNTaLL0KcU'
+
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 servername, logchannel = 723078810702184448, 1007170918549819412
