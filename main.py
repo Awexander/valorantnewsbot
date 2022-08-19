@@ -108,13 +108,13 @@ async def update(ctx):
     return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
 
 @bot.command()
-async def lastmatch(ctx, *,status):
+async def match(ctx, *,status):
     nametag = status.split('#')
     result , error= await matchupdate.getmatches(nametag[0], nametag[1])
     if result is True:
         await _log(
         '[REPORT]', 
-        message=f'Match Report: **{status.upper()}**',
+        message=f'**{status.upper()}** \n Rank: {matchupdate.match.rank}',
         map=matchupdate.match.map, 
         mode=matchupdate.match.gamemode, 
         score=f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
@@ -126,6 +126,11 @@ async def lastmatch(ctx, *,status):
     else:
         await _log('[ERROR]', f'error loading latest match data \n {error}')
 
+@bot.command()
+async def region(ctx, *, region):
+    matchupdate.region = region
+    return await _log('[SERVER]', f'Changed region to: {region}')
+    
 @tasks.loop(seconds=20)
 async def loop():
     global prevUpdate, prevMaintenance, prevIncidents, isNeed_Notification
@@ -190,19 +195,13 @@ async def _log(code, message='', map='', mode='', score='', agent='', headshot='
         uColor = blue
     else:
         uColor = 0xffffff
-
-    if code != '[REPORT]':
-        embed = discord.Embed(
-            title=code,
-            description=message, 
-            color=uColor
-        )
-    else:
-        embed = discord.Embed(
-            title=code,
-            description=message,
-            color=uColor,
-        )
+    
+    embed = discord.Embed(
+        title=code,
+        description=message, 
+        color=uColor
+    )
+    if code == '[REPORT]':
         embed.add_field(name='MAP', value=map, inline=True)
         embed.add_field(name='MODE', value=mode, inline=True)
         embed.add_field(name='SCORE', value=score, inline=True)
@@ -221,7 +220,7 @@ async def _sendNotification(message):
 async def _readjson():
     try:
         path = os.getcwd()
-        with open(path +'/config/updates.json', 'r') as w:
+        with open(path +'/data/updates.json', 'r') as w:
             data = json.loads(w.read())
         return data
     except Exception as error:
@@ -239,7 +238,7 @@ async def _appendData(updateData, maintenanceData, incidenctData):
             "maintenances": maintenanceData,
             "incidents": incidenctData
         }
-        with open(path+'/config/updates.json', 'w') as w:
+        with open(path+'/data/updates.json', 'w') as w:
             w.write(json.dumps(data, indent=4, separators=[',',':']))
     except Exception as error:
         await _log('[ERROR]',f'error appending updates data \n {error}')
