@@ -18,16 +18,16 @@ intents.messages = True
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 servername, logchannel = 1010443668659908788, 1007170918549819412
-uColor, red, green, blue = 0xffffff, 0xf50101, 0x01f501, 0x02aefd
 prevUpdate, prevMaintenance, prevIncidents = '','',''
 
 description: str= ''' valorant game updates, server status and scheduled maintenance ''' 
 
 bot = commands.Bot(command_prefix='.', description=description, intents=intents)
-isNeed_Notification = False
+isNeed_Append = 'None'
 startTime = dt.datetime.now()
 connectionTime = dt.datetime.now()
 disconnetTime = dt.datetime.now()
+
 @bot.event 
 async def on_disconnect():
     global disconnetTime
@@ -50,23 +50,10 @@ async def on_ready():
             )
         )
 
-    prevdata = await _readjson()
-    try:
-        prevUpdate = prevdata['updates']['title']
-    except Exception as error:
-        await _log('[ERROR]',f'failed to load previous updates details \n {error}')
-    try:
-        prevMaintenance = prevdata['maintenances']['title']
-    except Exception as error:
-        await _log('[ERROR]',f'failed to load previous maintenances details \n {error}')
-
-    try:
-        prevIncidents = prevdata['incidents']['title']
-    except Exception as error:
-        await _log('[ERROR]',f'failed to load previous incidents details \n {error}')
+    prevUpdate, prevMaintenance, prevIncidents = await _readjson()
 
     await asyncio.sleep(1)
-    dcTime = disconnetTime.strftime("%A %m/%d/%Y, %H:%M:%S")
+    dcTime = disconnetTime.strftime("%A %m/%d/%Y, %H:%M")
     await _log('[BOT]',f'bot is online, \n disconnected since {dcTime}')
     loop.start()
 
@@ -138,33 +125,29 @@ async def region(ctx, *, region):
     
 @tasks.loop(seconds=20)
 async def loop():
-    global prevUpdate, prevMaintenance, prevIncidents, isNeed_Notification
+    global prevUpdate, prevMaintenance, prevIncidents, isNeed_Append
     updateData = await _requestsupdates(updateURL)
     maintenanceData, incidentData = await _requestsupdates(statusURL)
     
-    try:   
+    try:
         latestPatch = await _getPatch(updateData)
-        #print(f'{latestPatch}, {prevUpdate}')
-        if latestPatch != prevUpdate and latestPatch != None:
+        if latestPatch != prevUpdate['title'] and latestPatch != None:
             prevUpdate = latestPatch
             if updateData['external_link'] != None:
                 link = updateData['external_link']
             else:
                 link = updateData['url']
-            isNeed_Notification = True
-
-            #notification here
-            if isNeed_Notification:
-                await _log('[BOT]',f'new update is available')
-                await _sendNotification(f"**GAME UPDATE** \n\n {updateData['title']} \n\n {link}")
-                await _appendData(updateData, maintenanceData, incidentData)
-
+            
+            isNeed_Append = 'patch'
+            await _log('[BOT]',f'new update is available')
+            message= f"**GAME UPDATE** \n\n {updateData['title']} \n\n {link}"
     except Exception as error:
         await _log('[ERROR]',f'processing updates data: \n{error}')
 
     try:
         if bool (maintenanceData):
-            if maintenanceData['titles'] != prevMaintenance:
+            if maintenanceData['titles'] != prevMaintenance['title']:
+                currMaintenance = await _getMaintenance(maintenanceData)
                 await _log('[BOT]', maintenanceData)
     except Exception as error:
         await _log('[ERROR]',f'processing maintenances data: \n{error}')
@@ -172,13 +155,29 @@ async def loop():
     try:
         if bool(incidentData):
             currIncident = await _getIncident(incidentData) 
-            if currIncident['incident'] != prevIncidents:
-                message= f"\n\n**{currIncident['incident']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
-                prevIncidents = currIncident['incident']
-                await _sendNotification(message)
-
+            if currIncident['title'] != prevIncidents['title']:
+                prevIncidents = currIncident['title']
+                
+                isNeed_Append = 'incident'
+                await _log('[BOT]',f'new incidents updated')
+                message= f"\n\n**{currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
     except Exception as error:
         await _log('[ERROR]',f'processing incidents data: \n{error}')
+
+    if isNeed_Append != 'None':
+        _prevUpdate, _prevMaintenance, _prevIncidents = await _readjson()
+        if isNeed_Append == 'patch': appendUpdate = updateData
+        else: appendUpdate = _prevUpdate
+
+        if isNeed_Append == 'maintenance': appendMaintenance = currMaintenance    
+        else: appendMaintenance = _prevMaintenance
+
+        if isNeed_Append == 'incident': appendIncident = currIncident
+        else: appendIncident = _prevIncidents
+        
+        isNeed_Append = 'None'
+        await _sendNotification(message)
+        await _appendData(appendUpdate, appendMaintenance, appendIncident)
 
 async def _getIncident(incidentData):
     for locale in incidentData[0]['titles']:
@@ -190,16 +189,23 @@ async def _getIncident(incidentData):
         if translation['locale'] == 'en_US':
             content = translation['content']
             break
+    content_id = incidentData[0]['updates'][0]['id']
     strtime = incidentData[0]['created_at']
     time = dt.datetime.strptime(strtime, "%Y-%m-%dT%H:%M:%S.%f%z") + dt.timedelta(hours=8)
 
-    report = {'severity': incidentData[0]['incident_severity'].upper(),
-        'incident': incident,
+    report = {
+        'severity': incidentData[0]['incident_severity'].upper(),
+        'title': incident,
+        'id': incidentData[0]['id'],
         'content': content,
+        'content_id': content_id,
         'time': time.strftime("%B %d, %Y at %H:%M GMT+8")
         }
     return report
-        
+
+async def _getMaintenance(maintenanceData):
+    print(maintenanceData)
+
 async def _requestsupdates(url):
     try:
         resp = requests.get(url, timeout=10)
@@ -212,9 +218,8 @@ async def _requestsupdates(url):
     except Exception as error:
        await _log('[ERROR]',f'requests failed: \n{error}')
 
-
 async def _log(code, message='', type='', content=Any):
-    global uColor, red, green
+    uColor, red, green, blue = 0xffffff, 0xf50101, 0x01f501, 0x02aefd
     channel = bot.get_channel(logchannel)
     if code == '[ERROR]':
         uColor = red
@@ -222,8 +227,6 @@ async def _log(code, message='', type='', content=Any):
         uColor = green
     elif code == '[SERVER]' or '[REPORT]':
         uColor = blue
-    else:
-        uColor = 0xffffff
     
     embed = discord.Embed(
         title=code,
@@ -252,9 +255,25 @@ async def _readjson():
         path = os.getcwd()
         with open(path +'/data/updates.json', 'r') as w:
             data = json.loads(w.read())
-        return data
     except Exception as error:
         await _log('[ERROR]',f'failed to load updates file \n {error}')
+
+    try:
+        prevUpdate = data['updates']
+    except Exception as error:
+        await _log('[ERROR]',f'failed to load previous updates details \n {error}')
+
+    try:
+        prevMaintenance = data['maintenances']
+    except Exception as error:
+        await _log('[ERROR]',f'failed to load previous maintenances details \n {error}')
+
+    try:
+        prevIncidents = data['incidents']
+    except Exception as error:
+        await _log('[ERROR]',f'failed to load previous incidents details \n {error}')
+    
+    return prevUpdate, prevMaintenance, prevIncidents
 
 async def _getPatch(data):
     if data['category'] == 'game_updates':
