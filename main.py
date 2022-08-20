@@ -1,8 +1,9 @@
 
 import asyncio
+from typing import Any
 import discord
 from discord.ext import commands, tasks
-from datetime import datetime
+import datetime as dt
 import getmatches as match
 import requests
 import json
@@ -16,7 +17,7 @@ intents.messages = True
 
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
-servername, logchannel = 723078810702184448, 1007170918549819412
+servername, logchannel = 1010443668659908788, 1007170918549819412
 uColor, red, green, blue = 0xffffff, 0xf50101, 0x01f501, 0x02aefd
 prevUpdate, prevMaintenance, prevIncidents = '','',''
 
@@ -24,24 +25,24 @@ description: str= ''' valorant game updates, server status and scheduled mainten
 
 bot = commands.Bot(command_prefix='.', description=description, intents=intents)
 isNeed_Notification = False
-startTime = datetime.now()
-connectionTime = datetime.now()
-disconnetTime = datetime.now()
+startTime = dt.datetime.now()
+connectionTime = dt.datetime.now()
+disconnetTime = dt.datetime.now()
 @bot.event 
 async def on_disconnect():
     global disconnetTime
-    disconnetTime = datetime.now()
+    disconnetTime = dt.datetime.now()
 
 @bot.event
 async def on_resumed():
     global connectionTime
-    connectionTime = datetime.now()
+    connectionTime = dt.datetime.now()
     await _log('[BOT]',f'bot is online') 
 
 @bot.event
 async def on_ready():
     global connectionTime, disconnetTime, prevUpdate, prevMaintenance, prevIncidents
-    connectionTime = datetime.now()
+    connectionTime = dt.datetime.now()
     await bot.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.listening, 
@@ -94,8 +95,8 @@ async def id(ctx):
 
 @bot.command()
 async def uptime(ctx):
-    upSeconds = datetime.now() - startTime
-    connSeconds = datetime.now() - connectionTime
+    upSeconds = dt.datetime.now() - startTime
+    connSeconds = dt.datetime.now() - connectionTime
     
     upTime = await _getTimeElapsed(upSeconds)
     connTime = await _getTimeElapsed(connSeconds)
@@ -117,17 +118,16 @@ async def lastmatch(ctx, *,valorantid):
     nametag = valorantid.split('#')
     result , error= await matchupdate.getmatches(nametag[0], nametag[1])
     if result is True:
-        await _log(
-        '[REPORT]', 
-        message=f'**{valorantid.upper()}** \n Rank: {matchupdate.match.rank}',
-        map=matchupdate.match.map, 
-        mode=matchupdate.match.gamemode, 
-        score=f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
-        agent=matchupdate.match.agent,
-        headshot=int(round(matchupdate.match.headshot)),
-        kda=matchupdate.match.kda,
-        adr=int(round(matchupdate.match.adr))
-        )
+        content = {
+        'map':matchupdate.match.map, 
+        'mode':matchupdate.match.gamemode, 
+        'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
+        'agent':matchupdate.match.agent,
+        'headshot':int(round(matchupdate.match.headshot)),
+        'kda':matchupdate.match.kda,
+        'adr':int(round(matchupdate.match.adr))
+        }
+        await _log('[REPORT]',message=f'**{valorantid.upper()}** \n Rank: {matchupdate.match.rank}',type='match', content=content)
     else:
         await _log('[ERROR]', f'error loading latest match data \n {error}')
 
@@ -140,7 +140,7 @@ async def region(ctx, *, region):
 async def loop():
     global prevUpdate, prevMaintenance, prevIncidents, isNeed_Notification
     updateData = await _requestsupdates(updateURL)
-    maintenanceData, incidenctData = await _requestsupdates(statusURL)
+    maintenanceData, incidentData = await _requestsupdates(statusURL)
     
     try:   
         latestPatch = await _getPatch(updateData)
@@ -156,8 +156,8 @@ async def loop():
             #notification here
             if isNeed_Notification:
                 await _log('[BOT]',f'new update is available')
-                await _sendNotification(f"<@&{756538183810023564}> **GAME UPDATE** \n\n {updateData['title']} \n\n {link}")
-                await _appendData(updateData, maintenanceData, incidenctData)
+                await _sendNotification(f"**GAME UPDATE** \n\n {updateData['title']} \n\n {link}")
+                await _appendData(updateData, maintenanceData, incidentData)
 
     except Exception as error:
         await _log('[ERROR]',f'processing updates data: \n{error}')
@@ -170,12 +170,36 @@ async def loop():
         await _log('[ERROR]',f'processing maintenances data: \n{error}')
 
     try:
-        if bool(incidenctData):     
-            if incidenctData['title'] != prevIncidents:
-                await _log('[BOT]',f'{incidenctData}')
+        if bool(incidentData):
+            currIncident = await _getIncident(incidentData) 
+            if currIncident['incident'] != prevIncidents:
+                message= f"\n\n**{currIncident['incident']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                prevIncidents = currIncident['incident']
+                await _sendNotification(message)
+
     except Exception as error:
         await _log('[ERROR]',f'processing incidents data: \n{error}')
 
+async def _getIncident(incidentData):
+    for locale in incidentData[0]['titles']:
+        if locale['locale'] == 'en_US':
+            incident = locale['content']
+            break
+    
+    for translation in incidentData[0]['updates'][0]['translations']:
+        if translation['locale'] == 'en_US':
+            content = translation['content']
+            break
+    strtime = incidentData[0]['created_at']
+    time = dt.datetime.strptime(strtime, "%Y-%m-%dT%H:%M:%S.%f%z") + dt.timedelta(hours=8)
+
+    report = {'severity': incidentData[0]['incident_severity'].upper(),
+        'incident': incident,
+        'content': content,
+        'time': time.strftime("%B %d, %Y at %H:%M GMT+8")
+        }
+    return report
+        
 async def _requestsupdates(url):
     try:
         resp = requests.get(url, timeout=10)
@@ -189,7 +213,7 @@ async def _requestsupdates(url):
        await _log('[ERROR]',f'requests failed: \n{error}')
 
 
-async def _log(code, message='', map='', mode='', score='', agent='', headshot='', kda=[], adr=''):
+async def _log(code, message='', type='', content=Any):
     global uColor, red, green
     channel = bot.get_channel(logchannel)
     if code == '[ERROR]':
@@ -207,20 +231,21 @@ async def _log(code, message='', map='', mode='', score='', agent='', headshot='
         color=uColor
     )
     if code == '[REPORT]':
-        embed.add_field(name='MAP', value=map, inline=True)
-        embed.add_field(name='MODE', value=mode, inline=True)
-        embed.add_field(name='SCORE', value=score, inline=True)
-        embed.add_field(name='AGENT', value=agent, inline=True)
-        embed.add_field(name='K/D', value=float(kda[3]), inline=True)
-        embed.add_field(name='KDA', value=f'K:{kda[0]} D:{kda[1]} A:{kda[2]}', inline=True)
-        embed.add_field(name='ADR', value=adr, inline=True)
-        embed.add_field(name='HS%', value=f'{headshot}%', inline=True)
+        if type == 'match':
+            embed.add_field(name='MAP', value=content['map'], inline=True)
+            embed.add_field(name='MODE', value=content['mode'], inline=True)
+            embed.add_field(name='SCORE', value=content['score'], inline=True)
+            embed.add_field(name='AGENT', value=content['agent'], inline=True)
+            embed.add_field(name='K/D', value=float(content['kda'][3]), inline=True)
+            embed.add_field(name='KDA', value=f"K:{content['kda'][0]} D:{content['kda'][1]} A:{content['kda'][2]}", inline=True)
+            embed.add_field(name='ADR', value=content['adr'], inline=True)
+            embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
         
     await channel.send(embed=embed)
 
 async def _sendNotification(message):
     channel = bot.get_channel(servername)
-    await channel.send(f'{message}')
+    await channel.send(f'<@&{756538183810023564}> {message}')
 
 async def _readjson():
     try:
