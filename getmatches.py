@@ -1,4 +1,5 @@
 
+from tkinter import E
 import aiohttp
 import json
 
@@ -47,11 +48,14 @@ class getmatchinfo():
         except Exception as error:
             return None, error
 
-    async def _getpuuid(seld, url, timeout):
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(timeout)) as session:
-            async with session.get(url) as pid:
-                puuid = await pid.json()
-                return puuid['data']['puuid']
+    async def _getpuuid(self, url, timeout):
+        try:
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(timeout)) as session:
+                async with session.get(url) as pid:
+                    puuid = await pid.json()
+                    return puuid['data']['puuid']
+        except:
+            self.puuid = '37e126d2-58fb-5922-9542-c4aec97e9834' #default is awexander#007
 
     async def _getmap(self):
         return self.matches['data'][self.matchIndex]['metadata']['map']

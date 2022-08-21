@@ -56,6 +56,7 @@ async def on_ready():
     dcTime = disconnetTime.strftime("%A %m/%d/%Y, %H:%M")
     await _log('[BOT]',f'bot is online, \n disconnected since {dcTime}')
     loop.start()
+    getMatchReport.start()
 
 @bot.after_invoke
 async def on_command(ctx):
@@ -181,6 +182,57 @@ async def loop():
         isNeed_Append = 'None'
         await _sendNotification(message)
         await _appendData(appendUpdate, appendMaintenance, appendIncident)
+
+@tasks.loop(minutes=1)
+async def getMatchReport():
+    result, error = await matchupdate.getmatches(name='awexander', tag='007')
+    try: 
+        with open('data/matchlist.json', 'r') as r:
+            data = json.loads(r.read())
+            prevMatchid = data['matchid']
+    except: 
+        await _log('[ERROR]', message=f'error loading matchlist file \n {error}')
+
+    if result is True:
+        if matchupdate.match.matchid != prevMatchid:
+            content = {
+            'map':matchupdate.match.map, 
+            'mode':matchupdate.match.gamemode, 
+            'matchid': matchupdate.match.matchid,
+            'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
+            'agent':matchupdate.match.agent,
+            'headshot':int(round(matchupdate.match.headshot)),
+            'kda':matchupdate.match.kda,
+            'adr':int(round(matchupdate.match.adr))
+            }
+            try:
+                with open('data/matchlist.json', 'w') as w:
+                    json.dump(content, w, indent=4, separators=[',',':'])
+            except:
+                await _log('[ERROR]', message=f'error appending matchlist data \n {error}')
+
+            await _matchReport('[REPORT]',message=f'**AWEXANDER#007** \n Rank: {matchupdate.match.rank}',type='match', content=content)
+    else:
+        await _log('[ERROR]', f'error loading latest match data \n {error}')
+
+async def _matchReport(code, message='', type='', content=Any):
+    channel = bot.get_channel(reportchannel)
+    embed = discord.Embed(
+        title=code,
+        description=message, 
+        color=0x02aefd
+    )
+    if code == '[REPORT]':
+        if type == 'match':
+            embed.add_field(name='MAP', value=content['map'], inline=True)
+            embed.add_field(name='MODE', value=content['mode'], inline=True)
+            embed.add_field(name='SCORE', value=content['score'], inline=True)
+            embed.add_field(name='AGENT', value=content['agent'], inline=True)
+            embed.add_field(name='K/D', value=float(content['kda'][3]), inline=True)
+            embed.add_field(name='KDA', value=f"K:{content['kda'][0]} D:{content['kda'][1]} A:{content['kda'][2]}", inline=True)
+            embed.add_field(name='ADR', value=content['adr'], inline=True)
+            embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
+    await channel.send(embed=embed)
 
 async def _getIncident(incidentData):
     for locale in incidentData[0]['titles']:
