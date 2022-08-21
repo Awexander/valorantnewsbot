@@ -18,7 +18,7 @@ intents.messages = True
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
 servername, logchannel, reportchannel = 1010443668659908788, 1007170918549819412, 1010808789680803871
-prevUpdate, prevMaintenance, prevIncidents = '','',''
+prevUpdate, prevMaintenance, prevIncidents = [],[],[]
 
 description: str= ''' valorant game updates, server status and scheduled maintenance ''' 
 
