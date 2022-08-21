@@ -183,7 +183,7 @@ async def loop():
         await _sendNotification(message)
         await _appendData(appendUpdate, appendMaintenance, appendIncident)
 
-@tasks.loop(minutes=1)
+@tasks.loop(hours=1)
 async def getMatchReport():
     result, error = await matchupdate.getmatches(name='awexander', tag='007')
     try: 
