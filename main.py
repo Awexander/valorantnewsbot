@@ -17,7 +17,7 @@ intents.messages = True
 
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
-servername, logchannel = 1010443668659908788, 1007170918549819412
+servername, logchannel, reportchannel = 1010443668659908788, 1007170918549819412, 1010808789680803871
 prevUpdate, prevMaintenance, prevIncidents = '','',''
 
 description: str= ''' valorant game updates, server status and scheduled maintenance ''' 
@@ -147,8 +147,8 @@ async def loop():
     try:
         if bool (maintenanceData):
             currMaintenance = await _getMaintenance(maintenanceData)
-            if maintenanceData['id'] != prevMaintenance['id']:
-                maintenanceData['id'] = prevMaintenance['id']
+            if currMaintenance['id'] != prevMaintenance['id']:
+                prevMaintenance['id'] = currMaintenance['id']
                 
                 await _log('[BOT]',f'new maintenances updated')
                 message= f"**SERVER UPDATE**\n\n**{currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
