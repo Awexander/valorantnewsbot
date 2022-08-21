@@ -86,10 +86,15 @@ async def uptime(ctx):
     upSeconds = dt.datetime.now() - startTime
     connSeconds = dt.datetime.now() - connectionTime
     
-    upTime = await _getTimeElapsed(upSeconds)
-    connTime = await _getTimeElapsed(connSeconds)
+    embed = discord.Embed(title='[SERVER]', color=0x02aefd)
+    embed.add_field(name='SERVER TIME', value=await _getTimeElapsed(upSeconds), inline=False)
+    embed.add_field(name='BOT TIME', value=await _getTimeElapsed(connSeconds), inline=False)
 
-    return await _log('[SERVER]',f"[SERV TIME]\t {upTime} \n[BOT TIME]\t {connTime}")
+    await _sendlog(embed)
+
+async def _sendlog(embed):
+    channel = bot.get_channel(logchannel)
+    return await channel.send(embed=embed)
 
 @bot.command()
 async def update(ctx):
@@ -299,7 +304,7 @@ async def _log(code, message='', type='', content=Any):
             embed.add_field(name='KDA', value=f"K:{content['kda'][0]} D:{content['kda'][1]} A:{content['kda'][2]}", inline=True)
             embed.add_field(name='ADR', value=content['adr'], inline=True)
             embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
-        
+
     await channel.send(embed=embed)
 
 async def _sendNotification(message):
