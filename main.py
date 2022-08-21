@@ -146,21 +146,24 @@ async def loop():
 
     try:
         if bool (maintenanceData):
-            if maintenanceData['titles'] != prevMaintenance['title']:
-                currMaintenance = await _getMaintenance(maintenanceData)
-                await _log('[BOT]', maintenanceData)
+            currMaintenance = await _getMaintenance(maintenanceData)
+            if maintenanceData['id'] != prevMaintenance['id']:
+                maintenanceData['id'] = prevMaintenance['id']
+                
+                await _log('[BOT]',f'new maintenances updated')
+                message= f"**SERVER UPDATE**\n\n**{currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
     except Exception as error:
         await _log('[ERROR]',f'processing maintenances data: \n{error}')
 
     try:
         if bool(incidentData):
             currIncident = await _getIncident(incidentData) 
-            if currIncident['title'] != prevIncidents['title']:
-                prevIncidents = currIncident['title']
+            if currIncident['id'] != prevIncidents['id']:
+                prevIncidents['id'] = currIncident['id']
                 
                 isNeed_Append = 'incident'
                 await _log('[BOT]',f'new incidents updated')
-                message= f"\n\n**{currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                message= f"**STATUS UPDATE**\n\n**{currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
     except Exception as error:
         await _log('[ERROR]',f'processing incidents data: \n{error}')
 
@@ -199,7 +202,8 @@ async def _getIncident(incidentData):
         'id': incidentData[0]['id'],
         'content': content,
         'content_id': content_id,
-        'time': time.strftime("%B %d, %Y at %H:%M GMT+8")
+        'time': time.strftime("%B %d, %Y at %H:%M GMT+8"),
+        'status': incidentData['maintenance_status']
         }
     return report
 
