@@ -203,7 +203,7 @@ async def _getIncident(incidentData):
         'content': content,
         'content_id': content_id,
         'time': time.strftime("%B %d, %Y at %H:%M GMT+8"),
-        'status': incidentData['maintenance_status']
+        'status': incidentData[0]['maintenance_status']
         }
     return report
 
