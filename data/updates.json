@@ -7,7 +7,14 @@
         "title":"RITUAL COMPLETE // Reaver Skinline Trailer - VALORANT",
         "url":"https://playvalorant.com/en-us/news/game-updates/ritual-complete-reaver-skinline-trailer-valorant/"
     },
-    "maintenances":[],
+    "maintenances":{
+        "severity":"",
+        "title":"",
+        "id":5134,
+        "content":"",
+        "content_id":8410,
+        "time":""
+    },
     "incidents":{
         "severity":"WARNING",
         "title":"Competitive Queue is Ending",

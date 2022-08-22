@@ -2,16 +2,14 @@ import aiohttp
 import asyncio
 import datetime as dt
 import json
+import getmatches as match
 
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
+matchupdate = match.getmatchinfo()
 
 async def main():
-    maintenanceData, incidentData = await _requestsupdates(statusURL)
-    with open('data/incidents.json', 'w') as w:
-        json.dump(incidentData, w, indent=4, separators=[',',':'])
-    print(await _getIncident(incidentData))
-
-
+    incidentData, error = await matchupdate.getmatches('belangsukawa', '111')
+    print(error)
 
 async def _getIncident(incidentData):
     for locale in incidentData[0]['titles']:

@@ -1,5 +1,4 @@
 
-from tkinter import E
 import aiohttp
 import json
 
@@ -7,7 +6,6 @@ class getmatchinfo():
     def __init__(self):
         self.match = self._latestmatch(map=None, mode=None, matchid=None, roundWon=None, roundLost=None, agent=None, rank=None, headshot=None, kda=None, adr=None)
         self.region = 'ap'
-        self.matches = None
         pass
         
     async def getmatches(self, name, tag, timeout=30):
@@ -20,14 +18,15 @@ class getmatchinfo():
                 async with session.get(url) as resp:
                     matches = await resp.json()
                     self.matchIndex = 0
+                    self.matches = []
                     for data in matches['data']:
                         if data['metadata']['mode'] == 'Competitive':
                             self.matches = matches
                             break
-
                         self.matchIndex += 1
-                    if self.matches is None:
-                        return None, "didn't play any competitive yet"
+
+                    if self.matches == []:
+                        return None, f"{name}#{tag} didn't play any competitive yet"
 
                     #with open('data/fullmatches.json', 'w') as fm:
                         #json.dump(self.matches, fm, indent=4, separators=[',',':'])
