@@ -17,7 +17,7 @@ intents.messages = True
 
 updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
 statusURL = 'https://api.henrikdev.xyz/valorant/v1/status/ap'
-servername, logchannel, reportchannel = 1010443668659908788, 1007170918549819412, 1010808789680803871
+servername, logchannel, reportchannel, rankchannel = 1010443668659908788, 1007170918549819412, 1010808789680803871, 1011240037100310668
 prevUpdate, prevMaintenance, prevIncidents = [],[],[]
 
 description: str= ''' valorant game updates, server status and scheduled maintenance ''' 
@@ -200,26 +200,31 @@ async def getMatchReport():
     for id in ids:
         result, error = await matchupdate.getmatches(name=id['account']['name'], tag=id['account']['tag'])
         prevMatchid = id['matchid']
+        prevRank = id['rank']
+        print(prevRank)
         content = []
         if result is True:
             if matchupdate.match.matchid != prevMatchid:
                 content = {
-                'account': {
-                    'name':id['account']['name'], 
-                    'tag':id['account']['tag']
-                },
-                'map':matchupdate.match.map, 
-                'mode':matchupdate.match.gamemode, 
-                'matchid': matchupdate.match.matchid,
-                'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
-                'agent':matchupdate.match.agent,
-                'headshot':int(round(matchupdate.match.headshot)),
-                'kda':matchupdate.match.kda,
-                'adr':int(round(matchupdate.match.adr))
+                    'account': {
+                        'name':id['account']['name'], 
+                        'tag':id['account']['tag']
+                    },
+                    'rank':matchupdate.match.rank,
+                    'map':matchupdate.match.map, 
+                    'mode':matchupdate.match.gamemode, 
+                    'matchid': matchupdate.match.matchid,
+                    'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
+                    'agent':matchupdate.match.agent,
+                    'headshot':int(round(matchupdate.match.headshot)),
+                    'kda':matchupdate.match.kda,
+                    'adr':int(round(matchupdate.match.adr))
                 }
-                appendmatchlist.append(content)
+                await _matchReport('[REPORT]',message=f"**{id['account']['name'].upper()}#{id['account']['tag']}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
+            
+            if matchupdate.match.rank != prevRank:
+                await _matchReport('[REPORT]', message=f"**{id['account']['name'].upper()}#{id['account']['tag']}**", type='rank', content={'prevRank':prevRank, 'currRank':matchupdate.match.rank})
 
-                await _matchReport('[REPORT]',message=f"**{id['account']['name']}#{id['account']['tag']}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
         else:
             await _log('[ERROR]', f"error loading latest match data {id['account']['name']}#{id['account']['tag']} \n {error}")
         
@@ -233,7 +238,6 @@ async def getMatchReport():
         await _log('[ERROR]', message=f'error appending matchlist data \n {error}')
 
 async def _matchReport(code, message='', type='', content=Any):
-    channel = bot.get_channel(reportchannel)
     embed = discord.Embed(
         title=code,
         description=message, 
@@ -241,6 +245,7 @@ async def _matchReport(code, message='', type='', content=Any):
     )
     if code == '[REPORT]':
         if type == 'match':
+            channel = bot.get_channel(reportchannel)
             embed.add_field(name='MAP', value=content['map'], inline=True)
             embed.add_field(name='MODE', value=content['mode'], inline=True)
             embed.add_field(name='SCORE', value=content['score'], inline=True)
@@ -249,7 +254,11 @@ async def _matchReport(code, message='', type='', content=Any):
             embed.add_field(name='KDA', value=f"K:{content['kda'][0]} D:{content['kda'][1]} A:{content['kda'][2]}", inline=True)
             embed.add_field(name='ADR', value=content['adr'], inline=True)
             embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
-    await channel.send(embed=embed)
+        elif type == 'rank':
+            channel = bot.get_channel(rankchannel)
+            embed.add_field(name='Previous Rank', value=content['prevRank'])
+            embed.add_field(name='Current Rank', value=content['currRank'])
+    return await channel.send(embed=embed)
 
 async def _getIncident(incidentData):
     for locale in incidentData[0]['titles']:
