@@ -1,0 +1,42 @@
+[
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"111"
+        },
+        "rank":"Silver 3",
+        "map":"Haven",
+        "mode":"Competitive",
+        "matchid":"f7c8230a-6fbb-46c2-988c-a238047487aa",
+        "score":"13-6",
+        "agent":"Cypher",
+        "headshot":24,
+        "kda":[
+            23,
+            9,
+            6,
+            2.6
+        ],
+        "adr":212
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"111"
+        },
+        "rank":"Silver 3",
+        "map":"Haven",
+        "mode":"Competitive",
+        "matchid":"f7c8230a-6fbb-46c2-988c-a238047487aa",
+        "score":"13-6",
+        "agent":"Cypher",
+        "headshot":24,
+        "kda":[
+            23,
+            9,
+            6,
+            2.6
+        ],
+        "adr":212
+    }
+]

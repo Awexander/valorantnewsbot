@@ -1,0 +1,62 @@
+[
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "rank":"Diamond 1",
+        "map":"Breeze",
+        "mode":"Competitive",
+        "matchid":"dc79ec1f-be86-4095-8a88-ad275d8a175c",
+        "score":"4-13",
+        "agent":"Chamber",
+        "headshot":20,
+        "kda":[
+            21,
+            14,
+            2,
+            1.5
+        ],
+        "adr":226
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "rank":"Diamond 1",
+        "map":"Breeze",
+        "mode":"Competitive",
+        "matchid":"dc79ec1f-be86-4095-8a88-ad275d8a175c",
+        "score":"4-13",
+        "agent":"Chamber",
+        "headshot":20,
+        "kda":[
+            21,
+            14,
+            2,
+            1.5
+        ],
+        "adr":226
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "rank":"Diamond 1",
+        "map":"Breeze",
+        "mode":"Competitive",
+        "matchid":"dc79ec1f-be86-4095-8a88-ad275d8a175c",
+        "score":"4-13",
+        "agent":"Chamber",
+        "headshot":20,
+        "kda":[
+            21,
+            14,
+            2,
+            1.5
+        ],
+        "adr":226
+    }
+]

@@ -190,21 +190,19 @@ async def loop():
 
 @tasks.loop(hours=1)
 async def getMatchReport():
-    appendmatchlist = []
     try:
-        with open('data/matchlist.json', 'r') as r:
+        with open('data/accounts.json', 'r') as r:
             ids = json.loads(r.read())
     except Exception as error:
         await _log('[ERROR]', message=f'error loading ids \n error')
     
     for id in ids:
-        result, error = await matchupdate.getmatches(name=id['account']['name'], tag=id['account']['tag'])
-        prevMatchid = id['matchid']
-        prevRank = id['rank']
-        print(prevRank)
+        result, error = await matchupdate.getmatches(name=id['name'], tag=id['tag'])
+
         content = []
         if result is True:
-            if matchupdate.match.matchid != prevMatchid:
+            if matchupdate.match.matchid != id['matchid']:
+                id['matchid'] = matchupdate.match.matchid
                 content = {
                     'account': {
                         'name':id['account']['name'], 
@@ -220,22 +218,33 @@ async def getMatchReport():
                     'kda':matchupdate.match.kda,
                     'adr':int(round(matchupdate.match.adr))
                 }
-                await _matchReport('[REPORT]',message=f"**{id['account']['name'].upper()}#{id['account']['tag']}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
+                await _matchReport('[REPORT]',message=f"**{id['name'].upper()}#{id['tag']}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
             
-            if matchupdate.match.rank != prevRank:
-                await _matchReport('[REPORT]', message=f"**{id['account']['name'].upper()}#{id['account']['tag']}**", type='rank', content={'prevRank':prevRank, 'currRank':matchupdate.match.rank})
-
+                if matchupdate.match.rank != id['rank']:
+                    id['rank'] = matchupdate.match.rank
+                    await _matchReport('[REPORT]', message=f"**{id['name'].upper()}#{id['tag']}**", type='rank', content={'prevRank':id['rank'], 'currRank':matchupdate.match.rank})
+                
+                try:
+                    matchlist = []
+                    with open(f"data/accounts/{id['name']}#{id['tag']}.json", 'r') as r:
+                        matchlist = json.loads(r.read())
+                    
+                    matchlist.insert(0, content)
+                    try:
+                        with open(f"data/accounts/{id['name']}#{id['tag']}.json", 'w') as w:
+                            json.dump(matchlist, w, indent=4, separators=[',',':'])
+                    except:
+                        await _log('[ERROR]', message=f'error appending matchlist data \n {error}')
+                    
+                    try:
+                        with open('data/accounts.json', 'w') as w:
+                            json.dump(ids, w, indent=4, separators=[',',':'])
+                    except Exception as error:
+                        await _log('[ERROR]', f'error update accounts.json \n {error}')
+                except Exception as error:
+                    await _log('[ERROR]', f"error loading {id['name']}#{id['tag']}.json \n {error}")
         else:
             await _log('[ERROR]', f"error loading latest match data {id['account']['name']}#{id['account']['tag']} \n {error}")
-        
-        if bool(content) is False:
-            content = id
-        appendmatchlist.append(content)
-    try:
-        with open('data/matchlist.json', 'w') as w:
-            json.dump(appendmatchlist, w, indent=4, separators=[',',':'])
-    except:
-        await _log('[ERROR]', message=f'error appending matchlist data \n {error}')
 
 async def _matchReport(code, message='', type='', content=Any):
     embed = discord.Embed(
