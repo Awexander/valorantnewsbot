@@ -107,7 +107,7 @@ async def on_command_error(ctx, error):
 
 @bot.command()
 async def lastmatch(ctx, *,valorantid):
-    
+    #TODO: get lastmatch from db not from api
     nametag = valorantid.split('#')
     result , error= await matchupdate.getmatches(nametag[0], nametag[1])
     if result is True:
