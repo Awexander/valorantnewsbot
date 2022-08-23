@@ -188,7 +188,7 @@ async def loop():
         await _sendNotification(message)
         await _appendData(appendUpdate, appendMaintenance, appendIncident)
 
-@tasks.loop(hours=1)
+@tasks.loop(minutes=30)
 async def getMatchReport():
     try:
         with open('data/accounts.json', 'r') as r:
