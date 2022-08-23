@@ -97,7 +97,7 @@ class getmatchinfo():
         return self.matches['teams'][team]['rounds_won'], self.matches['teams'][team]['rounds_lost']
 
     async def _getHeadshot(self):
-        return float(round(self.matchstats['stats']['headshots'] / (self.matchstats['stats']['headshots'] + self.matchstats['stats']['bodyshots'] + self.matchstats['stats']['legshots']),1))
+        return (self.matchstats['stats']['headshots'] / (self.matchstats['stats']['headshots'] + self.matchstats['stats']['bodyshots'] + self.matchstats['stats']['legshots'])) * 100
 
     async def _getkda(self):
         return [self.matchstats['stats']['kills'], self.matchstats['stats']['deaths'], self.matchstats['stats']['assists'], float(round(self.matchstats['stats']['kills'] / self.matchstats['stats']['deaths'],1))]

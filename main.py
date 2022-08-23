@@ -322,7 +322,7 @@ async def _log(code, message='', type='', content=Any):
             embed.add_field(name='KDA', value=f"K:{content['kda'][0]} D:{content['kda'][1]} A:{content['kda'][2]}", inline=True)
             embed.add_field(name='ADR', value=content['adr'], inline=True)
             embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
-
+    
     await channel.send(embed=embed)
 
 async def _sendNotification(message, isNeed_Append, updateData, currMaintenance, currIncident):
