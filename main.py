@@ -200,6 +200,7 @@ async def getMatchReport():
                     'rank':matchupdate.match.rank,
                     'map':matchupdate.match.map, 
                     'mode':matchupdate.match.gamemode, 
+                    'timeplayed': matchupdate.match.matchdate,
                     'matchid': matchupdate.match.matchid,
                     'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
                     'agent':matchupdate.match.agent,
@@ -207,7 +208,7 @@ async def getMatchReport():
                     'kda':matchupdate.match.kda,
                     'adr':int(round(matchupdate.match.adr))
                 }
-                await _matchReport('[REPORT]',message=f"**{id['name'].upper()}#{id['tag'].upper}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
+                await _matchReport('[REPORT]',message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
             
                 if matchupdate.match.rank != id['rank']:
                     id['rank'] = matchupdate.match.rank
@@ -239,7 +240,7 @@ async def _matchReport(code, message='', type='', content=Any):
     embed = discord.Embed(
         title=code,
         description=message, 
-        color=0x02aefd
+        color=0x02aefd,
     )
     if code == '[REPORT]':
         if type == 'match':
@@ -252,6 +253,7 @@ async def _matchReport(code, message='', type='', content=Any):
             embed.add_field(name='KDA', value=f"K:{content['kda'][0]} D:{content['kda'][1]} A:{content['kda'][2]}", inline=True)
             embed.add_field(name='ADR', value=content['adr'], inline=True)
             embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
+            embed.set_footer(text=f"played on: {content['timeplayed']}")
         elif type == 'rank':
             channel = bot.get_channel(rankchannel)
             embed.add_field(name='Previous Rank', value=content['prevRank'])

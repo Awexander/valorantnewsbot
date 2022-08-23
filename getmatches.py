@@ -78,7 +78,8 @@ class getmatchinfo():
     
     async def _getmatchdate(self):
         #TODO: UNIX time
-        return self.matches['metadata']['game_start'] 
+        timestamp = datetime.fromtimestamp(self.matches['metadata']['game_start'])
+        return timestamp.strftime("%B %d, %Y at %H:%M GMT+8")
     
     async def _getstats(self):
         for stats in self.matches['players']['all_players']:
