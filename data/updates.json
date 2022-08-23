@@ -8,12 +8,13 @@
         "url":"https://playvalorant.com/en-us/news/game-updates/ritual-complete-reaver-skinline-trailer-valorant/"
     },
     "maintenances":{
-        "severity":"",
-        "title":"",
-        "id":5134,
-        "content":"",
-        "content_id":8410,
-        "time":""
+        "severity":null,
+        "title":"Patch Notification",
+        "id":5151,
+        "content":"The game will be unavailable for an upcoming patch deploy at 08/23/2022 14:00 PDT.",
+        "content_id":8460,
+        "time":"August 23, 2022 at 06:53 GMT+8",
+        "status":"scheduled"
     },
     "incidents":{
         "severity":"WARNING",

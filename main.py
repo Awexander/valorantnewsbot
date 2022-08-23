@@ -153,23 +153,23 @@ async def loop():
     try:
         if bool (maintenanceData):
             currMaintenance = await _getstatusData(maintenanceData)
-            if currMaintenance['id'] != prevMaintenance['id']:
+            if currMaintenance['id'] != prevMaintenance['id'] and currMaintenance != None:
                 prevMaintenance['id'] = currMaintenance['id']
-                
+                isNeed_Append = 'maintenance'
                 await _log('[BOT]',f'new maintenances updated')
-                message= f"**SERVER UPDATE**\n\n**{currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
     except Exception as error:
         await _log('[ERROR]',f'processing maintenances data: \n{error}')
 
     try:
         if bool(incidentData):
             currIncident = await _getstatusData(incidentData) 
-            if currIncident['id'] != prevIncidents['id']:
+            if currIncident['id'] != prevIncidents['id'] and currIncident != None:
                 prevIncidents['id'] = currIncident['id']
                 
                 isNeed_Append = 'incident'
                 await _log('[BOT]',f'new incidents updated')
-                message= f"**STATUS UPDATE**\n\n**{currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                message= f"**STATUS UPDATE**\n\n**{currIncident['severity'].upper()}: {currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
     except Exception as error:
         await _log('[ERROR]',f'processing incidents data: \n{error}')
 
@@ -198,7 +198,6 @@ async def getMatchReport():
     
     for id in ids:
         result, error = await matchupdate.getmatches(name=id['name'], tag=id['tag'])
-        print(id['name'])
 
         content = []
         if result is True:
@@ -285,7 +284,7 @@ async def _getstatusData(data):
     time = dt.datetime.strptime(strtime, "%Y-%m-%dT%H:%M:%S.%f%z") + dt.timedelta(hours=8)
 
     report = {
-        'severity': data[0]['incident_severity'].upper(),
+        'severity': data[0]['incident_severity'],
         'title': incident,
         'id': data[0]['id'],
         'content': content,
