@@ -17,11 +17,12 @@
         "status":"scheduled"
     },
     "incidents":{
-        "severity":"WARNING",
+        "severity":"warning",
         "title":"Competitive Queue is Ending",
         "id":5134,
         "content":"This Act's Competitive queue is ending soon. Check your Act Rank tab for specific times.",
         "content_id":8410,
-        "time":"August 20, 2022 at 09:48 GMT+8"
+        "time":"August 20, 2022 at 09:48 GMT+8",
+        "status":null
     }
 }

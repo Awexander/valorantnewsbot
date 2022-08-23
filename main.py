@@ -137,16 +137,17 @@ async def loop():
     
     try:
         latestPatch = await _getPatch(updateData)
-        if latestPatch != prevUpdate['title'] and latestPatch != None:
+        if latestPatch['title'] != prevUpdate['title'] and latestPatch != None:
             prevUpdate = latestPatch
-            if updateData['external_link'] != None:
-                link = updateData['external_link']
+            if latestPatch['external_link'] != None:
+                link = latestPatch['external_link']
             else:
-                link = updateData['url']
+                link = latestPatch['url']
             
             isNeed_Append = 'patch'
             await _log('[BOT]',f'new update is available')
-            message= f"**GAME UPDATE** \n\n {updateData['title']} \n\n {link}"
+            message= f"**GAME UPDATE** \n\n {latestPatch['title']} \n\n {link}"
+            await _sendNotification(message, isNeed_Append, latestPatch, prevMaintenance, prevIncidents)
     except Exception as error:
         await _log('[ERROR]',f'processing updates data: \n{error}')
 
@@ -154,10 +155,12 @@ async def loop():
         if bool (maintenanceData):
             currMaintenance = await _getstatusData(maintenanceData)
             if currMaintenance['id'] != prevMaintenance['id'] and currMaintenance != None:
-                prevMaintenance['id'] = currMaintenance['id']
+                prevMaintenance = currMaintenance
+
                 isNeed_Append = 'maintenance'
                 await _log('[BOT]',f'new maintenances updated')
                 message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                await _sendNotification(message, isNeed_Append, prevUpdate, currMaintenance, prevIncidents)
     except Exception as error:
         await _log('[ERROR]',f'processing maintenances data: \n{error}')
 
@@ -165,28 +168,14 @@ async def loop():
         if bool(incidentData):
             currIncident = await _getstatusData(incidentData) 
             if currIncident['id'] != prevIncidents['id'] and currIncident != None:
-                prevIncidents['id'] = currIncident['id']
+                prevIncidents = currIncident
                 
                 isNeed_Append = 'incident'
                 await _log('[BOT]',f'new incidents updated')
                 message= f"**STATUS UPDATE**\n\n**{currIncident['severity'].upper()}: {currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                await _sendNotification(message, isNeed_Append, prevUpdate, prevMaintenance, currIncident)
     except Exception as error:
         await _log('[ERROR]',f'processing incidents data: \n{error}')
-
-    if isNeed_Append != 'None':
-        _prevUpdate, _prevMaintenance, _prevIncidents = await _readjson()
-        if isNeed_Append == 'patch': appendUpdate = updateData
-        else: appendUpdate = _prevUpdate
-
-        if isNeed_Append == 'maintenance': appendMaintenance = currMaintenance    
-        else: appendMaintenance = _prevMaintenance
-
-        if isNeed_Append == 'incident': appendIncident = currIncident
-        else: appendIncident = _prevIncidents
-        
-        isNeed_Append = 'None'
-        await _sendNotification(message)
-        await _appendData(appendUpdate, appendMaintenance, appendIncident)
 
 @tasks.loop(minutes=30)
 async def getMatchReport():
@@ -298,7 +287,7 @@ async def _requestsupdates(url):
     try:
         resp = requests.get(url, timeout=10)
         if url == updateURL:
-            return resp.json()['data'][0]
+            return resp.json()
         elif url == statusURL:
             data = resp.json()['data']
             return data['maintenances'], data['incidents']
@@ -334,7 +323,21 @@ async def _log(code, message='', type='', content=Any):
 
     await channel.send(embed=embed)
 
-async def _sendNotification(message):
+async def _sendNotification(message, isNeed_Append, updateData, currMaintenance, currIncident):
+    if isNeed_Append != 'None':
+        _prevUpdate, _prevMaintenance, _prevIncidents = await _readjson()
+        if isNeed_Append == 'patch': appendUpdate = updateData
+        else: appendUpdate = _prevUpdate
+
+        if isNeed_Append == 'maintenance': appendMaintenance = currMaintenance    
+        else: appendMaintenance = _prevMaintenance
+
+        if isNeed_Append == 'incident': appendIncident = currIncident
+        else: appendIncident = _prevIncidents
+        
+        isNeed_Append = 'None'
+        await _appendData(appendUpdate, appendMaintenance, appendIncident)
+
     channel = bot.get_channel(servername)
     await channel.send(f'<@&{756538183810023564}> {message}')
 
@@ -364,8 +367,9 @@ async def _readjson():
     return prevUpdate, prevMaintenance, prevIncidents
 
 async def _getPatch(data):
-    if data['category'] == 'game_updates':
-        return data['title']
+    for patch in data['data']:
+        if patch['category'] == 'game_updates':
+            return patch
 
 async def _appendData(updateData, maintenanceData, incidenctData):
     try:
