@@ -198,6 +198,7 @@ async def getMatchReport():
     
     for id in ids:
         result, error = await matchupdate.getmatches(name=id['name'], tag=id['tag'])
+        print(id['name'])
 
         content = []
         if result is True:
@@ -205,8 +206,8 @@ async def getMatchReport():
                 id['matchid'] = matchupdate.match.matchid
                 content = {
                     'account': {
-                        'name':id['account']['name'], 
-                        'tag':id['account']['tag']
+                        'name':id['name'], 
+                        'tag':id['tag']
                     },
                     'rank':matchupdate.match.rank,
                     'map':matchupdate.match.map, 
@@ -218,11 +219,11 @@ async def getMatchReport():
                     'kda':matchupdate.match.kda,
                     'adr':int(round(matchupdate.match.adr))
                 }
-                await _matchReport('[REPORT]',message=f"**{id['name'].upper()}#{id['tag']}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
+                await _matchReport('[REPORT]',message=f"**{id['name'].upper()}#{id['tag'].upper}** \n Rank: {matchupdate.match.rank}",type='match', content=content)
             
                 if matchupdate.match.rank != id['rank']:
                     id['rank'] = matchupdate.match.rank
-                    await _matchReport('[REPORT]', message=f"**{id['name'].upper()}#{id['tag']}**", type='rank', content={'prevRank':id['rank'], 'currRank':matchupdate.match.rank})
+                    await _matchReport('[REPORT]', message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':matchupdate.match.rank})
                 
                 try:
                     matchlist = []
@@ -244,7 +245,7 @@ async def getMatchReport():
                 except Exception as error:
                     await _log('[ERROR]', f"error loading {id['name']}#{id['tag']}.json \n {error}")
         else:
-            await _log('[ERROR]', f"error loading latest match data {id['account']['name']}#{id['account']['tag']} \n {error}")
+            await _log('[ERROR]', f"error loading latest match data {id['name']}#{id['tag']} \n {error}")
 
 async def _matchReport(code, message='', type='', content=Any):
     embed = discord.Embed(

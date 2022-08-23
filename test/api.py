@@ -1,14 +1,12 @@
 
-import aiohttp
 import asyncio
-import datetime as dt
 import json
-import getmatches as match
+from .. import getmatches as match
 
 matchupdate = match.getmatchinfo()
 async def main():
     try:
-        with open('data/accounts.json', 'r') as r:
+        with open('..data/accounts.json', 'r') as r:
             ids = json.loads(r.read())
     except Exception as error:
         print(error)
@@ -40,19 +38,19 @@ async def main():
 
                 try:
                     matchlist = []
-                    with open(f"data/accounts/{id['name']}#{id['tag']}.json", 'r') as r:
+                    with open(f"..data/accounts/{id['name']}#{id['tag']}.json", 'r') as r:
                         matchlist = json.loads(r.read())
                     
                     matchlist.insert(0, content)
 
                     try:
-                        with open(f"data/accounts/{id['name']}#{id['tag']}.json", 'w') as w:
+                        with open(f"..data/accounts/{id['name']}#{id['tag']}.json", 'w') as w:
                             json.dump(matchlist, w, indent=4, separators=[',',':'])
                     except:
                         print("error append")
 
                     try:
-                        with open('data/accounts.json', 'w') as w:
+                        with open('..data/accounts.json', 'w') as w:
                             json.dump(ids, w, indent=4, separators=[',',':'])
                     except Exception as error:
                         print(f'error update accounts.json \n {error}')

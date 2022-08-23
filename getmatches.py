@@ -1,10 +1,11 @@
 
 import aiohttp
-import cloudscraper
 import json
+from datetime import datetime
 
 class getmatchinfo():
     def __init__(self):
+        self.region = 'ap'
         self.match = self._latestmatch(
             matchid=None, 
             map=None, 
@@ -20,30 +21,24 @@ class getmatchinfo():
         pass
         
     async def getmatches(self, name, tag, timeout=30):
-        url = f'https://api.tracker.gg/api/v2/valorant/standard/matches/riot/{name}%23{tag}?type=competitive'
+        url = f'https://api.henrikdev.xyz/valorant/v3/matches/{self.region}/{name}/{tag}'
+        puuid_url = f'https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}?force=true'
         try:
-            scraper = cloudscraper.create_scraper(
-                browser={
-                    'browser': 'chrome',
-                    'platform': 'android',
-                    'desktop': False
-                }
-            )
-            with scraper.get(url,timeout=timeout) as r:
-                matches = r.json()
-                self.matchIndex = 0
-                self.matches = []
-                for data in matches['data']['matches']:
-                    if data['metadata']['modeName'] == 'Competitive':
-                        self.matches = data
-                        break
-                    self.matchIndex += 1
+            self.puuid = await self._getpuuid(puuid_url, timeout)
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(timeout)) as session:
+                async with session.get(url) as resp:
+                    matches = await resp.json()
+                    self.matches = []
+                    for data in matches['data']:
+                        if data['metadata']['mode'] == 'Competitive':
+                            self.matches = data
+                            break
 
-                if self.matches == []:
-                    return None, f"{name}#{tag} didn't play any competitive yet"
+                    if self.matches == []:
+                        return None, f"{name}#{tag} didn't play any competitive yet"
 
-                #with open(f'data/{name}#{tag}.json', 'w') as fm:
-                    #json.dump(self.matches, fm, indent=4, separators=[',',':'])
+                    #with open('data/test/fullmatches.json', 'w') as fm:
+                        #json.dump(self.matches, fm, indent=4, separators=[',',':'])
             
             self.match.matchid = await self._getMatchID()
             self.match.map = await self._getmap()
@@ -73,37 +68,41 @@ class getmatchinfo():
             return 'not a valid valorant id'
 
     async def _getMatchID(self):
-        return self.matches['attributes']['id']
+        return self.matches['metadata']['matchid']
 
     async def _getmap(self):
-        return self.matches['metadata']['mapName']
+        return self.matches['metadata']['map']
 
     async def _getGameMode(self):
-        return self.matches['metadata']['modeName']
+        return self.matches['metadata']['mode']
     
     async def _getmatchdate(self):
-        return self.matches['metadata']['timestamp']
+        #TODO: UNIX time
+        return self.matches['metadata']['game_start'] 
     
     async def _getstats(self):
-        return self.matches['segments'][0]['stats']
+        for stats in self.matches['players']['all_players']:
+            if stats['puuid'] == self.puuid:
+                return stats
 
     async def _getAgent(self):
-        return self.matches['segments'][0]['metadata']['agentName']
+        return self.matchstats['character']
 
     async def _getRank(self):
-        return self.matchstats['rank']['metadata']['tierName']
+        return self.matchstats['currenttier_patched']
 
     async def _getMatchResult(self):
-        return self.matchstats['roundsWon']['value'], self.matchstats['roundsLost']['value']
+        team = self.matchstats['team'].lower()
+        return self.matches['teams'][team]['rounds_won'], self.matches['teams'][team]['rounds_lost']
 
     async def _getHeadshot(self):
-        return self.matchstats['headshotsPercentage']['value']
+        return float(round(self.matchstats['stats']['headshots'] / (self.matchstats['stats']['headshots'] + self.matchstats['stats']['bodyshots'] + self.matchstats['stats']['legshots']),1))
 
     async def _getkda(self):
-        return [self.matchstats['kills']['value'], self.matchstats['deaths']['value'], self.matchstats['assists']['value'], float(round(self.matchstats['kdRatio']['value'],1))]
+        return [self.matchstats['stats']['kills'], self.matchstats['stats']['deaths'], self.matchstats['stats']['assists'], float(round(self.matchstats['stats']['kills'] / self.matchstats['stats']['deaths'],1))]
     
     async def _getadr(self):
-        return self.matchstats['damagePerRound']['value']
+        return self.matchstats['damage_made'] / self.matches['metadata']['rounds_played']
     
     class _latestmatch():
         def __init__(self, matchid, map, mode, matchdate, agent, rank, roundWon, roundLost, headshot, kda, adr):
