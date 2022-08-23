@@ -152,7 +152,7 @@ async def loop():
 
     try:
         if bool (maintenanceData):
-            currMaintenance = await _getMaintenance(maintenanceData)
+            currMaintenance = await _getstatusData(maintenanceData)
             if currMaintenance['id'] != prevMaintenance['id']:
                 prevMaintenance['id'] = currMaintenance['id']
                 
@@ -163,7 +163,7 @@ async def loop():
 
     try:
         if bool(incidentData):
-            currIncident = await _getIncident(incidentData) 
+            currIncident = await _getstatusData(incidentData) 
             if currIncident['id'] != prevIncidents['id']:
                 prevIncidents['id'] = currIncident['id']
                 
@@ -269,33 +269,30 @@ async def _matchReport(code, message='', type='', content=Any):
             embed.add_field(name='Current Rank', value=content['currRank'])
     return await channel.send(embed=embed)
 
-async def _getIncident(incidentData):
-    for locale in incidentData[0]['titles']:
+async def _getstatusData(data):
+    for locale in data[0]['titles']:
         if locale['locale'] == 'en_US':
             incident = locale['content']
             break
     
-    for translation in incidentData[0]['updates'][0]['translations']:
+    for translation in data[0]['updates'][0]['translations']:
         if translation['locale'] == 'en_US':
             content = translation['content']
             break
-    content_id = incidentData[0]['updates'][0]['id']
-    strtime = incidentData[0]['created_at']
+    content_id = data[0]['updates'][0]['id']
+    strtime = data[0]['created_at']
     time = dt.datetime.strptime(strtime, "%Y-%m-%dT%H:%M:%S.%f%z") + dt.timedelta(hours=8)
 
     report = {
-        'severity': incidentData[0]['incident_severity'].upper(),
+        'severity': data[0]['incident_severity'].upper(),
         'title': incident,
-        'id': incidentData[0]['id'],
+        'id': data[0]['id'],
         'content': content,
         'content_id': content_id,
         'time': time.strftime("%B %d, %Y at %H:%M GMT+8"),
-        'status': incidentData[0]['maintenance_status']
+        'status': data[0]['maintenance_status']
         }
     return report
-
-async def _getMaintenance(maintenanceData):
-    print(maintenanceData)
 
 async def _requestsupdates(url):
     try:
