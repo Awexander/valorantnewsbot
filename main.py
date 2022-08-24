@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 from .src import commands as cmd , events, tasks
+from src import CONFIG
 import json
 import os
 
@@ -16,7 +17,7 @@ command = cmd.command()
 event = events.event()
 task = tasks.task()
 
-BOT_TOKEN = 'ODg3OTYzMjE4MzIzMDYyODE1.GeDh9Q.mOuShCULdT65hMIneKrC5nMcLjZ2Et0wI1aS5o'
+BOT_TOKEN = CONFIG.BOT_TOKEN
 isNeed_Append = 'None'
 
 async def _log(code, message='', type='', content=[]):

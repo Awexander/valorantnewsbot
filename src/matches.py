@@ -1,6 +1,5 @@
 
 import aiohttp
-import json
 from datetime import datetime
 
 class getmatchinfo():

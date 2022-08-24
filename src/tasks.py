@@ -2,16 +2,9 @@ import discord
 from discord.ext import tasks
 import datetime as dt
 import aiohttp
-import asyncio
 from .matches import getmatchinfo as match
-from .utils import (
-    ERROR,
-    BOT,
-    NOTIFICATION,
-    REPORT,
-    readprevdata,
-)
-from src.CONFIG import ANNOUNCECHANNEL, BLUE
+from .utils import utils
+from src.CONFIG import BLUE, SLASH
 import json
 import os
 
@@ -20,6 +13,7 @@ class task():
         self.match = match()
         self.matchinfo = self.match.match
         self.bot = bot
+        self.utils = utils(bot)
         self.region = self.match.region
 
         self.updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
@@ -44,11 +38,11 @@ class task():
                     link = latestPatch['url']
                 
                 isNeed_Append = 'patch'
-                await BOT('[BOT]',f'new update is available')
+                await self.utils.BOT('[BOT]',f'new update is available')
                 message= f"**GAME UPDATE** \n\n {latestPatch['title']} \n\n {link}"
                 await self._sendNotification(message, isNeed_Append, latestPatch, self.prevMaintenance, self.prevIncidents)
         except Exception as error:
-            await ERROR(f'processing updates data: \n{error}')
+            await self.utils.ERROR(f'processing updates data: \n{error}')
 
         try:
             if bool (maintenanceData):
@@ -57,11 +51,11 @@ class task():
                     prevMaintenance = currMaintenance
 
                     isNeed_Append = 'maintenance'
-                    await BOT(f'new maintenances updated')
+                    await self.utils.BOT(f'new maintenances updated')
                     message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
                     await self._sendNotification(message, isNeed_Append, self.prevUpdate, currMaintenance, self.prevIncidents)
         except Exception as error:
-            await ERROR(f'processing maintenances data: \n{error}')
+            await self.utils.ERROR(f'processing maintenances data: \n{error}')
 
         try:
             if bool(incidentData):
@@ -70,19 +64,19 @@ class task():
                     prevIncidents = currIncident
                     
                     isNeed_Append = 'incident'
-                    await BOT(f'new incidents updated')
+                    await self.utils.BOT(f'new incidents updated')
                     message= f"**STATUS UPDATE**\n\n**{currIncident['severity'].upper()}: {currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
                     await self._sendNotification(message, isNeed_Append, self.prevUpdate, self.prevMaintenance, currIncident)
         except Exception as error:
-            await ERROR(f'processing incidents data: \n{error}')
+            await self.utils.ERROR(f'processing incidents data: \n{error}')
 
     @tasks.loop(minutes=30)
     async def getMatchReport(self):
         try:
-            with open(self.path+'data/accounts.json', 'r') as r:
+            with open(self.path + f'{SLASH}data{SLASH}accounts.json', 'r') as r:
                 ids = json.loads(r.read())
         except Exception as error:
-            await ERROR(message=f'error loading ids \n error')
+            await self.utils.ERROR(message=f'error loading ids \n error')
         
         for id in ids:
             result, error = await self.match.getmatches(name=id['name'], tag=id['tag'])
@@ -115,25 +109,25 @@ class task():
                     
                     try:
                         matchlist = []
-                        with open(self.path+f"data/accounts/{id['name']}#{id['tag']}.json", 'r') as r:
+                        with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
                             matchlist = json.loads(r.read())
                         
                         matchlist.insert(0, content)
                         try:
-                            with open(self.path+f"data/accounts/{id['name']}#{id['tag']}.json", 'w') as w:
+                            with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'w') as w:
                                 json.dump(matchlist, w, indent=4, separators=[',',':'])
                         except:
-                            await ERROR(message=f'error appending matchlist data \n {error}')
+                            await self.utils.ERROR(message=f'error appending matchlist data \n {error}')
                         
                         try:
-                            with open(self.path+'data/accounts.json', 'w') as w:
+                            with open(self.path+f'{SLASH}data{SLASH}accounts.json', 'w') as w:
                                 json.dump(ids, w, indent=4, separators=[',',':'])
                         except Exception as error:
-                            await ERROR(f'error update accounts.json \n {error}')
+                            await self.utils.ERROR(f'error update accounts.json \n {error}')
                     except Exception as error:
-                        await ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
+                        await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
             else:
-                await ERROR(f"error loading latest match data {id['name']}#{id['tag']} \n {error}")
+                await self.utils.ERROR(f"error loading latest match data {id['name']}#{id['tag']} \n {error}")
 
     async def _matchReport(self, message='', type='', content=[]):
         embed = discord.Embed(
@@ -155,7 +149,7 @@ class task():
             embed.add_field(name='Previous Rank', value=content['prevRank'])
             embed.add_field(name='Current Rank', value=content['currRank'])
 
-        return await REPORT(embed=embed)
+        return await self.utils.REPORT(embed=embed)
 
     async def _getstatusData(data):
         for locale in data[0]['titles']:
@@ -187,16 +181,16 @@ class task():
             async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(30)) as session:
                 async with session.get(url) as resp:
                     if url == self.updateURL:
-                        return resp.json()
+                        return await resp.json()
                     elif url == self.statusURL:
-                        data = resp.json()['data']
-                        return data['maintenances'], data['incidents']
+                        data = await resp.json()
+                        return data['data']['maintenances'], data['data']['incidents']
         except Exception as error:
-            await ERROR('[ERROR]',f'requests failed: \n{error}')
+            await self.utils.ERROR(f'requests failed: \n{error}')
 
     async def _sendNotification(self, message, isNeed_Append, updateData, currMaintenance, currIncident):
         if isNeed_Append != 'None':
-            _prevUpdate, _prevMaintenance, _prevIncidents = await readprevdata()
+            _prevUpdate, _prevMaintenance, _prevIncidents = await self.utils.readprevdata()
             if isNeed_Append == 'patch': appendUpdate = updateData
             else: appendUpdate = _prevUpdate
 
@@ -209,7 +203,7 @@ class task():
             isNeed_Append = 'None'
             await self._appendData(appendUpdate, appendMaintenance, appendIncident)
 
-        await NOTIFICATION(f'<@&{756538183810023564}> {message}')
+        await self.utils.NOTIFICATION(f'<@&{756538183810023564}> {message}')
 
     async def _appendData(self, updateData, maintenanceData, incidenctData):
         try:
@@ -218,11 +212,11 @@ class task():
                 "maintenances": maintenanceData,
                 "incidents": incidenctData
             }
-            with open(self.path+'/data/updates.json', 'w') as w:
+            with open(self.path + f'{SLASH}data{SLASH}updates.json', 'w') as w:
                 w.write(json.dumps(data, indent=4, separators=[',',':']))
 
         except Exception as error:
-            await ERROR(f'error appending updates data \n {error}')
+            await self.utils.ERROR(f'error appending updates data \n {error}')
 
     async def readPatch(data):
         for patch in data['data']:
