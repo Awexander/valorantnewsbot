@@ -101,12 +101,12 @@ class task():
                         'kda':self.matchinfo.kda,
                         'adr':int(round(self.matchinfo.adr))
                     }
-                    await self._matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
+                    await self.utils.matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
                 
                     if self.matchinfo.rank != id['rank']:
+                        await self.utils.matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
                         id['rank'] = self.matchinfo.rank
-                        await self._matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
-                    
+                        
                     try:
                         matchlist = []
                         with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
@@ -128,31 +128,6 @@ class task():
                         await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
             else:
                 await self.utils.ERROR(f"error loading latest match data {id['name']}#{id['tag']} \n {error}")
-
-    async def _matchReport(self, message='', type='', content=[]):
-        embed = discord.Embed(
-            title='[REPORT]',
-            description=message, 
-            color=BLUE,
-        )
-        if type == 'match':
-            embed.add_field(name='MAP', value=content['map'], inline=True)
-            embed.add_field(name='MODE', value=content['mode'], inline=True)
-            embed.add_field(name='SCORE', value=content['score'], inline=True)
-            embed.add_field(name='AGENT', value=content['agent'], inline=True)
-            embed.add_field(name='K/D', value=float(content['kda'][3]), inline=True)
-            embed.add_field(name='KDA', value=f"K:{content['kda'][0]} D:{content['kda'][1]} A:{content['kda'][2]}", inline=True)
-            embed.add_field(name='ADR', value=content['adr'], inline=True)
-            embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
-            embed.set_footer(text=f"played on: {content['timeplayed']}")
-
-            return await self.utils.REPORT(embed=embed)
-        elif type == 'rank':
-            embed.add_field(name='Previous Rank', value=content['prevRank'])
-            embed.add_field(name='Current Rank', value=content['currRank'])
-
-            return await self.utils.RANK(embed=embed)
-
 
     async def _getstatusData(data):
         for locale in data[0]['titles']:

@@ -1,60 +1,65 @@
-from ..main import discord, command, event
-from datetime import datetime
+import discord 
+from discord.ext import commands
+from src.CONFIG import SLASH, BLUE
+from src.matches import getmatchinfo as match
+from src.utils import utils
+import datetime as dt
+import os
 
-bot = command.Bot
-class command():
-    def __init__(self):
+class command(commands.Cog):
+    def __init__(self, bot):
         self.region = 'ap'
-        pass
-
-    @bot.command()
-    async def id(self, ctx):
-        return await _log('[SERVER]',f'Channel ID: {ctx.channel.id}')
-
-    @bot.command()
-    async def uptime(self, ctx):
-        upSeconds = dt.datetime.now() - event.startTime
-        connSeconds = dt.datetime.now() - event.connectionTime
+        self.matches = match()
+        self.matchinfo = self.matches.match
+        self.utils = utils(bot)
         
-        embed = discord.Embed(title='[SERVER]', color=0x02aefd)
-        embed.add_field(name='SERVER TIME', value=await _getTimeElapsed(upSeconds), inline=False)
-        embed.add_field(name='BOT TIME', value=await _getTimeElapsed(connSeconds), inline=False)
+        self.path = os.getcwd()
+        self.startTime = dt.datetime.now()
+        self.connectionTime = dt.datetime.now()
 
-        await _sendlog(embed)
+    @commands.command()
+    async def id(self, ctx):
+        return await self.utils.SERVER(f'Channel ID: {ctx.channel.id}')
 
-    async def _sendlog(self, embed):
-        channel = bot.get_channel(logchannel)
-        return await channel.send(embed=embed)
+    @commands.command()
+    async def uptime(self, ctx):
+        upSeconds = dt.datetime.now() - self.startTime
+        connSeconds = dt.datetime.now() - self.connectionTime
+        
+        embed = discord.Embed(title='[SERVER]', color=BLUE)
+        embed.add_field(name='SERVER TIME', value=await self.utils.TIME(upSeconds), inline=False)
+        embed.add_field(name='BOT TIME', value=await self.utils.TIME(connSeconds), inline=False)
 
-    @bot.command()
+        await self.utils.LOG(embed)
+
+    @commands.command()
     async def update(self, ctx):
-        message = await _readjson()
-        return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
+        message = await self.utils.readprevdata()
+        return await self.utils.SERVER(f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
 
-    @bot.listen()
-    async def on_command_error(self, ctx, error):
-        return await _log('[ERROR]', f'{error}')
-
-    @bot.command()
-    async def lastmatch(self, ctx, *,valorantid):
+    @commands.command()
+    async def match(self, ctx, *,valorantid):
         #TODO: get lastmatch from db not from api
         nametag = valorantid.split('#')
-        result , error= await matchupdate.getmatches(nametag[0], nametag[1])
+        result , error= await self.matches.getmatches(nametag[0], nametag[1])
         if result is True:
             content = {
-            'map':matchupdate.match.map, 
-            'mode':matchupdate.match.gamemode, 
-            'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
-            'agent':matchupdate.match.agent,
-            'headshot':int(round(matchupdate.match.headshot)),
-            'kda':matchupdate.match.kda,
-            'adr':int(round(matchupdate.match.adr))
+            'map':self.matchinfo.map, 
+            'mode':self.matchinfo.gamemode, 
+            'score':f'{self.matchinfo.roundWon}-{self.matchinfo.roundLost}', 
+            'agent':self.matchinfo.agent,
+            'headshot':int(round(self.matchinfo.headshot)),
+            'kda':self.matchinfo.kda,
+            'adr':int(round(self.matchinfo.adr))
             }
-            await _log('[REPORT]',message=f'**{valorantid.upper()}** \n Rank: {matchupdate.match.rank}',type='match', content=content)
+            await self.utils.matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
         else:
-            await _log('[ERROR]', f'error loading latest match data \n {error}')
+            await self.utils.ERROR(f'error loading latest match data \n {error}')
 
-    @bot.command()
-    async def region(self, ctx, *, region):
-        matchupdate.region = region
-        return await _log('[SERVER]', f'Changed region to: {region}')
+    @commands.command()
+    async def setregion(self, ctx, *, region):
+        self.matches.region = region
+        return await self.utils.SERVER(f'Changed region to: {region}')
+    
+    async def on_command_error(self, ctx, error):
+        return await self.utils.ERROR(f'{error}')
