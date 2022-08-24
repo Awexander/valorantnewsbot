@@ -1,6 +1,12 @@
-import asyncio
-import json
-from src.test import api
-from src.test import open
+import discord
+from discord.ext import commands
+from src.tasks import task as tasks
 
-asyncio.get_event_loop().run_until_complete(api.main())
+description: str= ''' valorant game updates, server status and scheduled maintenance '''
+intents = discord.Intents.default()
+intents.members = True
+intents.messages = True
+bot = commands.Bot(command_prefix='.', description=description, intents=intents)
+BOT_TOKEN = ''
+task = tasks(bot)
+bot.run(BOT_TOKEN)
