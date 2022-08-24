@@ -56,6 +56,5 @@ async def on_message(message):
     if isinstance(message.channel, discord.DMChannel):
         return await util.BOT(f"got a direct message from <@{message.author.id}> \n '{message.content}'")
 
-bot.add_listener(command.on_command_error)
 bot.add_cog(command(bot))
 bot.run(BOT_TOKEN)

@@ -65,20 +65,20 @@ class utils():
     async def LOG(self, content=discord.Embed):
         return await self.bot.get_channel(LOGCHANNEL).send(embed=content)
 
-    async def TIME(timeSeconds):
+    async def TIME(self, timeSeconds):
         minutes, seconds = divmod(timeSeconds.total_seconds(), 60)
         hours, minutes = divmod(minutes, 60)
         days, hours = divmod(hours, 24)
 
         upTime = []
         if days: 
-            upTime.append('**{:01}**Days'.format(int(days)))
+            upTime.append('**{:01}** Days'.format(int(days)))
         if hours:
-            upTime.append(' **{:02}**Hours'.format(int(hours)))
+            upTime.append(' **{:02}** Hours'.format(int(hours)))
         if minutes:
-            upTime.append(' **{:02}**Minutes'.format(int(minutes)))
+            upTime.append(' **{:02}** Minutes'.format(int(minutes)))
         if seconds:
-            upTime.append(' **{:02}**Seconds'.format(int(seconds)))
+            upTime.append(' **{:02}** Seconds'.format(int(seconds)))
 
         return ':'.join(upTime)
 

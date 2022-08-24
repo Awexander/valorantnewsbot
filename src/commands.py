@@ -34,8 +34,8 @@ class command(commands.Cog):
 
     @commands.command()
     async def update(self, ctx):
-        message = await self.utils.readprevdata()
-        return await self.utils.SERVER(f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
+        update, maintenance, incidents  = await self.utils.readprevdata()
+        return await self.utils.SERVER(f"Latest update: {update['title']} \n Updated at: {update['date']}")
 
     @commands.command()
     async def match(self, ctx, *,valorantid):
@@ -61,5 +61,6 @@ class command(commands.Cog):
         self.matches.region = region
         return await self.utils.SERVER(f'Changed region to: {region}')
     
+    @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         return await self.utils.ERROR(f'{error}')
