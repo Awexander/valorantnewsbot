@@ -4,7 +4,7 @@ from typing import Any
 import discord
 from discord.ext import commands, tasks
 import datetime as dt
-import getmatches as match
+from src import matches as match
 import requests
 import json
 import os
@@ -28,107 +28,6 @@ startTime = dt.datetime.now()
 connectionTime = dt.datetime.now()
 disconnetTime = dt.datetime.now()
 
-@bot.event 
-async def on_disconnect():
-    global disconnetTime
-    disconnetTime = dt.datetime.now()
-
-@bot.event
-async def on_resumed():
-    global connectionTime
-    connectionTime = dt.datetime.now()
-    await _log('[BOT]',f'bot is online') 
-
-@bot.event
-async def on_ready():
-    global connectionTime, disconnetTime, prevUpdate, prevMaintenance, prevIncidents
-    connectionTime = dt.datetime.now()
-    await bot.change_presence(
-        activity=discord.Activity(
-            type=discord.ActivityType.listening, 
-            name=" raspberrypi "
-            )
-        )
-
-    prevUpdate, prevMaintenance, prevIncidents = await _readjson()
-
-    await asyncio.sleep(1)
-    dcTime = disconnetTime.strftime("%A %m/%d/%Y, %H:%M")
-    await _log('[BOT]',f'bot is online, \n disconnected since {dcTime}')
-    loop.start()
-    getMatchReport.start()
-
-@bot.after_invoke
-async def on_command(ctx):
-    if ctx.author == bot.user:
-        return
-
-    if isinstance(ctx.channel, discord.DMChannel):
-        return await _log('[BOT]',f"got a direct message from <@{ctx.author.id}> \n '{ctx.message.content}'")
-    
-    await ctx.message.delete(delay=1)
-
-@bot.event
-async def on_message(message):
-    await bot.process_commands(message)
-    if message.author == bot.user:
-        return
-
-    if isinstance(message.channel, discord.DMChannel):
-        return await _log('[BOT]',f"got a direct message from <@{message.author.id}> \n '{message.content}'")
-
-@bot.command()
-async def id(ctx):
-    return await _log('[SERVER]',f'Channel ID: {ctx.channel.id}')
-
-@bot.command()
-async def uptime(ctx):
-    upSeconds = dt.datetime.now() - startTime
-    connSeconds = dt.datetime.now() - connectionTime
-    
-    embed = discord.Embed(title='[SERVER]', color=0x02aefd)
-    embed.add_field(name='SERVER TIME', value=await _getTimeElapsed(upSeconds), inline=False)
-    embed.add_field(name='BOT TIME', value=await _getTimeElapsed(connSeconds), inline=False)
-
-    await _sendlog(embed)
-
-async def _sendlog(embed):
-    channel = bot.get_channel(logchannel)
-    return await channel.send(embed=embed)
-
-@bot.command()
-async def update(ctx):
-    message = await _readjson()
-    return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
-
-@bot.listen()
-async def on_command_error(ctx, error):
-    return await _log('[ERROR]', f'{error}')
-
-@bot.command()
-async def lastmatch(ctx, *,valorantid):
-    #TODO: get lastmatch from db not from api
-    nametag = valorantid.split('#')
-    result , error= await matchupdate.getmatches(nametag[0], nametag[1])
-    if result is True:
-        content = {
-        'map':matchupdate.match.map, 
-        'mode':matchupdate.match.gamemode, 
-        'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
-        'agent':matchupdate.match.agent,
-        'headshot':int(round(matchupdate.match.headshot)),
-        'kda':matchupdate.match.kda,
-        'adr':int(round(matchupdate.match.adr))
-        }
-        await _log('[REPORT]',message=f'**{valorantid.upper()}** \n Rank: {matchupdate.match.rank}',type='match', content=content)
-    else:
-        await _log('[ERROR]', f'error loading latest match data \n {error}')
-
-@bot.command()
-async def region(ctx, *, region):
-    matchupdate.region = region
-    return await _log('[SERVER]', f'Changed region to: {region}')
-    
 @tasks.loop(seconds=20)
 async def loop():
     global prevUpdate, prevMaintenance, prevIncidents, isNeed_Append
