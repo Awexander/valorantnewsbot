@@ -9,7 +9,7 @@ from src.utils import utils
 description: str= ''' valorant game updates, server status and scheduled maintenance '''
 intents = discord.Intents.default()
 intents.members = True
-intents.message_content = True
+intents.messages = True
 
 bot = commands.Bot(command_prefix='.', description=description, intents=intents)
 task = tasks(bot)
@@ -28,11 +28,8 @@ async def on_ready():
             )
         )
 
-    prevUpdate, prevMaintenance, prevIncidents = await util.readprevdata()
-    print(bot.user.id)
-    for guild in bot.guilds:
-        print(f"joined {guild.name}")
-
+    task.prevUpdate, task.prevMaintenance, task.prevIncidents = await util.readprevdata()
+    
     await asyncio.sleep(1)
     await util.BOT(f'bot is online')
     task.loop.start()

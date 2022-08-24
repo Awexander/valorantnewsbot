@@ -38,7 +38,7 @@ class task():
                     link = latestPatch['url']
                 
                 isNeed_Append = 'patch'
-                await self.utils.BOT('[BOT]',f'new update is available')
+                await self.utils.BOT(f'new update is available')
                 message= f"**GAME UPDATE** \n\n {latestPatch['title']} \n\n {link}"
                 await self._sendNotification(message, isNeed_Append, latestPatch, self.prevMaintenance, self.prevIncidents)
         except Exception as error:
@@ -145,11 +145,14 @@ class task():
             embed.add_field(name='ADR', value=content['adr'], inline=True)
             embed.add_field(name='HS%', value=f"{content['headshot']}%", inline=True)
             embed.set_footer(text=f"played on: {content['timeplayed']}")
+
+            return await self.utils.REPORT(embed=embed)
         elif type == 'rank':
             embed.add_field(name='Previous Rank', value=content['prevRank'])
             embed.add_field(name='Current Rank', value=content['currRank'])
 
-        return await self.utils.REPORT(embed=embed)
+            return await self.utils.RANK(embed=embed)
+
 
     async def _getstatusData(data):
         for locale in data[0]['titles']:
@@ -218,7 +221,7 @@ class task():
         except Exception as error:
             await self.utils.ERROR(f'error appending updates data \n {error}')
 
-    async def readPatch(data):
+    async def readPatch(self, data):
         for patch in data['data']:
             if patch['category'] == 'game_updates':
                 return patch

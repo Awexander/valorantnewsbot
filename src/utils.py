@@ -2,7 +2,8 @@ import discord
 from src.CONFIG import (
     ANNOUNCECHANNEL,
     LOGCHANNEL,
-    GREEN, 
+    GREEN,
+    RANKCHANNEL, 
     RED,
     BLUE,
     REPORTCHANNEL,
@@ -54,10 +55,12 @@ class utils():
 
     async def REPORT(self, embed=discord.Embed):
         return await self.bot.get_channel(REPORTCHANNEL).send(embed=embed)
+    
+    async def RANK(self, embed=discord.Embed):
+        return await self.bot.get_channel(RANKCHANNEL).send(embed=embed)
 
     async def NOTIFICATION(self, message=str):
         return await self.bot.get_channel(ANNOUNCECHANNEL).send(message)
 
     async def log(self, content=discord.Embed):
-        channel = self.bot.get_channel(LOGCHANNEL)
-        return await channel.send(embed=content)
+        return await self.bot.get_channel(LOGCHANNEL).send(embed=content)
