@@ -27,17 +27,18 @@ class getmatchinfo():
             async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(timeout)) as session:
                 async with session.get(url) as resp:
                     matches = await resp.json()
-                    self.matches = []
-                    for data in matches['data']:
-                        if data['metadata']['mode'] == 'Competitive':
-                            self.matches = data
-                            break
+                    if matches['status'] == 200:
+                        self.matches = []
+                        for data in matches['data']:
+                            if data['metadata']['mode'] == 'Competitive':
+                                self.matches = data
+                                break
 
-                    if self.matches == []:
-                        return None, f"{name}#{tag} didn't play any competitive yet"
+                        if self.matches == []:
+                            return None, f"{name}#{tag} didn't play any competitive yet"
 
-                    #with open('data/test/fullmatches.json', 'w') as fm:
-                        #json.dump(self.matches, fm, indent=4, separators=[',',':'])
+                        #with open('data/test/fullmatches.json', 'w') as fm:
+                            #json.dump(self.matches, fm, indent=4, separators=[',',':'])
             
             self.match.matchid = await self._getMatchID()
             self.match.map = await self._getmap()
@@ -54,8 +55,8 @@ class getmatchinfo():
 
             return True, None
             
-        except Exception as error:
-            return None, error
+        except:
+            return None, matches['status']
 
     async def _getpuuid(self, url, timeout):
         try:

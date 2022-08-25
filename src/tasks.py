@@ -28,7 +28,7 @@ class task():
         maintenanceData, incidentData = await self._requestsupdates(self.statusURL)
         isNeed_Append = 'None'
 
-        try:
+        if updateData['status'] == 200:
             latestPatch = await self.readPatch(updateData)
             if latestPatch['title'] != self.prevUpdate['title'] and latestPatch != None:
                 self.prevUpdate = latestPatch
@@ -41,8 +41,8 @@ class task():
                 await self.utils.BOT(f'new update is available')
                 message= f"**GAME UPDATE** \n\n {latestPatch['title']} \n\n {link}"
                 await self._sendNotification(message, isNeed_Append, latestPatch, self.prevMaintenance, self.prevIncidents)
-        except Exception as error:
-            await self.utils.ERROR(f'processing updates data: \n{error}')
+        else:
+            await self.utils.ERROR(f"Processing updates data \nError code: {updateData['status']}")
 
         try:
             if bool (maintenanceData):
@@ -54,8 +54,8 @@ class task():
                     await self.utils.BOT(f'new maintenances updated')
                     message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
                     await self._sendNotification(message, isNeed_Append, self.prevUpdate, currMaintenance, self.prevIncidents)
-        except Exception as error:
-            await self.utils.ERROR(f'processing maintenances data: \n{error}')
+        except:
+            await self.utils.ERROR(f"Processing maintenances data \nError code: {maintenanceData['status']}")
 
         try:
             if bool(incidentData):
@@ -67,8 +67,8 @@ class task():
                     await self.utils.BOT(f'new incidents updated')
                     message= f"**STATUS UPDATE**\n\n**{currIncident['severity'].upper()}: {currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
                     await self._sendNotification(message, isNeed_Append, self.prevUpdate, self.prevMaintenance, currIncident)
-        except Exception as error:
-            await self.utils.ERROR(f'processing incidents data: \n{error}')
+        except:
+            await self.utils.ERROR(f"Processing incidents data \nError code: {incidentData['status']}")
 
     @tasks.loop(minutes=30)
     async def getMatchReport(self):
@@ -127,7 +127,7 @@ class task():
                     except Exception as error:
                         await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
             else:
-                await self.utils.ERROR(f"error loading latest match data {id['name']}#{id['tag']} \n {error}")
+                await self.utils.ERROR(f"Error request match data {id['name']}#{id['tag']} \n Error code: {error}")
 
     async def _getstatusData(data):
         for locale in data[0]['titles']:
@@ -155,16 +155,20 @@ class task():
         return report
 
     async def _requestsupdates(self, url):
-        try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(30)) as session:
-                async with session.get(url) as resp:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(30)) as session:
+            async with session.get(url) as resp:
+                data = await resp.json()
+                if data['status'] == 200:
                     if url == self.updateURL:
-                        return await resp.json()
-                    elif url == self.statusURL:
-                        data = await resp.json()
-                        return data['data']['maintenances'], data['data']['incidents']
-        except Exception as error:
-            await self.utils.ERROR(f'requests failed: \n{error}')
+                        return data
+                    else:
+                        if bool(data['data']['maintenances']) or bool(data['data']['incidents']):
+                            return data['data']['maintenances'], data['data']['incidents']
+                        else: 
+                            return None, None
+                else: 
+                    if url == self.updateURL: return data
+                    else: return data, data
 
     async def _sendNotification(self, message, isNeed_Append, updateData, currMaintenance, currIncident):
         if isNeed_Append != 'None':

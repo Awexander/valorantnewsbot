@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
-from src.CONFIG import SLASH, BLUE
-from src.matches import getmatchinfo as match
+from src.CONFIG import BLUE
+from src.matches import getmatchinfo
 from src.utils import utils
 import datetime as dt
 import os
@@ -9,13 +9,12 @@ import os
 class command(commands.Cog):
     def __init__(self, bot):
         self.region = 'ap'
-        self.matches = match()
+        self.matches = getmatchinfo()
         self.matchinfo = self.matches.match
         self.utils = utils(bot)
         
         self.path = os.getcwd()
         self.startTime = dt.datetime.now()
-        self.connectionTime = dt.datetime.now()
 
     @commands.command()
     async def id(self, ctx):
@@ -59,7 +58,7 @@ class command(commands.Cog):
     @commands.command()
     async def setregion(self, ctx, *, region):
         self.matches.region = region
-        return await self.utils.SERVER(f'Changed region to: {region}')
+        return await self.utils.SERVER(f'Changed region to: {self.matches.region}')
     
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
