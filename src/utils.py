@@ -42,8 +42,13 @@ class utils():
         return prevUpdate, prevMaintenance, prevIncidents
 
     async def ERROR(self, message):
-        embed = discord.Embed(title='[ERROR]', description=message, color=RED)
-        return await self.LOG(content=embed)
+        if self.lastmessage == message:
+            return 
+        else:
+            #avoid repeating error log
+            self.lastmessage = message
+            embed = discord.Embed(title='[ERROR]', description=message, color=RED)
+            return await self.LOG(content=embed)
 
     async def BOT(self, message):
         embed = discord.Embed(title='[BOT]', description=message, color=GREEN)

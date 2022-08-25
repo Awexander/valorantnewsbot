@@ -37,7 +37,7 @@ class command(commands.Cog):
         return await self.utils.SERVER(f"Latest update: {update['title']} \n Updated at: {update['date']}")
 
     @commands.command()
-    async def match(self, ctx, *,valorantid):
+    async def latestmatch(self, ctx, *,valorantid):
         #TODO: get lastmatch from db not from api
         nametag = valorantid.split('#')
         result , error= await self.matches.getmatches(nametag[0], nametag[1])
