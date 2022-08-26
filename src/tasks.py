@@ -11,7 +11,7 @@ import os
 class task():
     def __init__(self, bot) -> None:
         self.match = match()
-        self.matchinfo = self.match.match
+        self.matchinfo = self.match.matchlist
         self.bot = bot
         self.utils = utils(bot)
         self.region = self.match.region
@@ -90,6 +90,7 @@ class task():
                             'name':id['name'], 
                             'tag':id['tag']
                         },
+                        'puuid':self.matchinfo.puuid,
                         'rank':self.matchinfo.rank,
                         'map':self.matchinfo.map, 
                         'mode':self.matchinfo.gamemode, 
@@ -101,10 +102,10 @@ class task():
                         'kda':self.matchinfo.kda,
                         'adr':int(round(self.matchinfo.adr))
                     }
-                    await self.utils.matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
+                    await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
                 
                     if self.matchinfo.rank != id['rank']:
-                        await self.utils.matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
+                        await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
                         id['rank'] = self.matchinfo.rank
                         
                     try:

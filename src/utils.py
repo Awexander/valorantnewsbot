@@ -15,6 +15,7 @@ import json
 class utils():
     def __init__(self, bot) -> None:
         self.bot = bot
+        self.lastmessage = ''
         pass
     async def readprevdata(self):
         try:
@@ -87,7 +88,7 @@ class utils():
 
         return ':'.join(upTime)
 
-    async def matchReport(self, message='', type='', content=[]):
+    async def report(self, message='', type='', content=[]):
         embed = discord.Embed(
             title='[REPORT]',
             description=message, 

@@ -10,7 +10,7 @@ class command(commands.Cog):
     def __init__(self, bot):
         self.region = 'ap'
         self.matches = getmatchinfo()
-        self.matchinfo = self.matches.match
+        self.matchinfo = self.matches.matchlist
         self.utils = utils(bot)
         
         self.path = os.getcwd()
@@ -37,21 +37,24 @@ class command(commands.Cog):
         return await self.utils.SERVER(f"Latest update: {update['title']} \n Updated at: {update['date']}")
 
     @commands.command()
-    async def latestmatch(self, ctx, *,valorantid):
+    async def match(self, ctx, *,valorantid):
         #TODO: get lastmatch from db not from api
         nametag = valorantid.split('#')
         result , error= await self.matches.getmatches(nametag[0], nametag[1])
         if result is True:
             content = {
+            'puuid':self.matchinfo.puuid,
             'map':self.matchinfo.map, 
             'mode':self.matchinfo.gamemode, 
+            'timeplayed': self.matchinfo.matchdate,
+            'matchid': self.matchinfo.matchid,
             'score':f'{self.matchinfo.roundWon}-{self.matchinfo.roundLost}', 
             'agent':self.matchinfo.agent,
             'headshot':int(round(self.matchinfo.headshot)),
             'kda':self.matchinfo.kda,
             'adr':int(round(self.matchinfo.adr))
             }
-            await self.utils.matchReport(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
+            await self.utils.report(message=f"**{nametag[0].upper()}#{nametag[1].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
         else:
             await self.utils.ERROR(f'error loading latest match data \n {error}')
 
@@ -62,4 +65,5 @@ class command(commands.Cog):
     
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        await ctx.message.delete(delay=1)
         return await self.utils.ERROR(f'{error}')

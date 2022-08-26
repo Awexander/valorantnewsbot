@@ -1,11 +1,12 @@
 
 import aiohttp
-from datetime import datetime
+import datetime as dt
 
 class getmatchinfo():
     def __init__(self):
         self.region = 'ap'
-        self.match = self._latestmatch(
+        self.matchlist = self._latestmatch(
+            puuid=None,
             matchid=None, 
             map=None, 
             mode=None, 
@@ -20,10 +21,10 @@ class getmatchinfo():
         pass
         
     async def getmatches(self, name, tag, timeout=30):
+        self._name = name
+        self._tag = tag
         url = f'https://api.henrikdev.xyz/valorant/v3/matches/{self.region}/{name}/{tag}'
-        puuid_url = f'https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}?force=true'
         try:
-            self.puuid = await self._getpuuid(puuid_url, timeout)
             async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(timeout)) as session:
                 async with session.get(url) as resp:
                     matches = await resp.json()
@@ -37,35 +38,21 @@ class getmatchinfo():
                         if self.matches == []:
                             return None, f"{name}#{tag} didn't play any competitive yet"
 
-                        #with open('data/test/fullmatches.json', 'w') as fm:
-                            #json.dump(self.matches, fm, indent=4, separators=[',',':'])
-            
-            self.match.matchid = await self._getMatchID()
-            self.match.map = await self._getmap()
-            self.match.gamemode = await self._getGameMode()
-            self.match.matchdate = await self._getmatchdate()
-            self.matchstats = await self._getstats()
+                    self.matchlist.matchid = await self._getMatchID()
+                    self.matchlist.map = await self._getmap()
+                    self.matchlist.gamemode = await self._getGameMode()
+                    self.matchlist.matchdate = await self._getmatchdate()
+                    self.matchstats = await self._getstats()
+                    self.matchlist.agent = await self._getAgent()
+                    self.matchlist.rank = await self._getRank()
+                    self.matchlist.roundWon, self.matchlist.roundLost = await self._getMatchResult()
+                    self.matchlist.headshot = await self._getHeadshot()
+                    self.matchlist.kda = await self._getkda()
+                    self.matchlist.adr = await self._getadr()
 
-            self.match.agent = await self._getAgent()
-            self.match.rank = await self._getRank()
-            self.match.roundWon, self.match.roundLost = await self._getMatchResult()
-            self.match.headshot = await self._getHeadshot()
-            self.match.kda = await self._getkda()
-            self.match.adr = await self._getadr()
-
-            return True, None
-            
+                    return True, None
         except:
-            return None, matches['status']
-
-    async def _getpuuid(self, url, timeout):
-        try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(timeout)) as session:
-                async with session.get(url) as pid:
-                    puuid = await pid.json()
-                    return puuid['data']['puuid']
-        except:
-            return 'not a valid valorant id'
+            False, matches['status']
 
     async def _getMatchID(self):
         return self.matches['metadata']['matchid']
@@ -78,12 +65,13 @@ class getmatchinfo():
     
     async def _getmatchdate(self):
         #TODO: UNIX time
-        timestamp = datetime.fromtimestamp(self.matches['metadata']['game_start'])
+        timestamp = dt.datetime.fromtimestamp(self.matches['metadata']['game_start'])
         return timestamp.strftime("%B %d, %Y at %H:%M GMT+8")
     
     async def _getstats(self):
         for stats in self.matches['players']['all_players']:
-            if stats['puuid'] == self.puuid:
+            if stats['name'].lower() == self._name.lower() and stats['tag'].lower() == self._tag.lower():
+                self.matchlist.puuid = stats['puuid']
                 return stats
 
     async def _getAgent(self):
@@ -106,7 +94,8 @@ class getmatchinfo():
         return self.matchstats['damage_made'] / self.matches['metadata']['rounds_played']
     
     class _latestmatch():
-        def __init__(self, matchid, map, mode, matchdate, agent, rank, roundWon, roundLost, headshot, kda, adr):
+        def __init__(self, puuid, matchid, map, mode, matchdate, agent, rank, roundWon, roundLost, headshot, kda, adr):
+            self.puuid = puuid
             self.matchid = matchid
             self.map = map
             self.gamemode = mode
