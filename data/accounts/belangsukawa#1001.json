@@ -4,6 +4,28 @@
             "name":"belangsukawa",
             "tag":"1001"
         },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Icebox",
+        "mode":"Competitive",
+        "timeplayed":"August 27, 2022 at 17:10 GMT+8",
+        "matchid":"f99423c4-826d-4f76-bbc6-274201a6e0ba",
+        "score":"2-13",
+        "agent":"Chamber",
+        "headshot":16,
+        "kda":[
+            8,
+            14,
+            0,
+            0.6
+        ],
+        "adr":90
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
         "rank":"Platinum 2",
         "map":"Bind",
         "mode":"Competitive",

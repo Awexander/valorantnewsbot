@@ -38,19 +38,19 @@ class getmatchinfo():
                         if self.matches == []:
                             return None, f"{name}#{tag} didn't play any competitive yet"
 
-                    self.matchlist.matchid = await self._getMatchID()
-                    self.matchlist.map = await self._getmap()
-                    self.matchlist.gamemode = await self._getGameMode()
-                    self.matchlist.matchdate = await self._getmatchdate()
-                    self.matchstats = await self._getstats()
-                    self.matchlist.agent = await self._getAgent()
-                    self.matchlist.rank = await self._getRank()
-                    self.matchlist.roundWon, self.matchlist.roundLost = await self._getMatchResult()
-                    self.matchlist.headshot = await self._getHeadshot()
-                    self.matchlist.kda = await self._getkda()
-                    self.matchlist.adr = await self._getadr()
+                self.matchlist.matchid = await self._getMatchID()
+                self.matchlist.map = await self._getmap()
+                self.matchlist.gamemode = await self._getGameMode()
+                self.matchlist.matchdate = await self._getmatchdate()
+                self.matchstats = await self._getstats()
+                self.matchlist.agent = await self._getAgent()
+                self.matchlist.rank = await self._getRank()
+                self.matchlist.roundWon, self.matchlist.roundLost = await self._getMatchResult()
+                self.matchlist.headshot = await self._getHeadshot()
+                self.matchlist.kda = await self._getkda()
+                self.matchlist.adr = await self._getadr()
 
-                    return True, None
+                return True, None
         except:
             False, matches['status']
 
