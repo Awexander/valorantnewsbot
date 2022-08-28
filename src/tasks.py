@@ -70,7 +70,7 @@ class task():
         except:
             await self.utils.ERROR(f"Processing incidents data \nError code: {incidentData['status']}")
 
-    @tasks.loop(minutes=30)
+    @tasks.loop(minutes=20)
     async def getMatchReport(self):
         try:
             with open(self.path + f'{SLASH}data{SLASH}accounts.json', 'r') as r:

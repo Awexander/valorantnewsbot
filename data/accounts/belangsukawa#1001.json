@@ -6,6 +6,28 @@
         },
         "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
         "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"August 28, 2022 at 02:58 GMT+8",
+        "matchid":"b700a0da-aeed-49b3-84ee-75fb17ff8405",
+        "score":"16-14",
+        "agent":"Astra",
+        "headshot":23,
+        "kda":[
+            20,
+            14,
+            4,
+            1.4
+        ],
+        "adr":160
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
         "map":"Icebox",
         "mode":"Competitive",
         "timeplayed":"August 27, 2022 at 17:10 GMT+8",

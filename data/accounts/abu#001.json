@@ -4,6 +4,50 @@
             "name":"abu",
             "tag":"001"
         },
+        "puuid":"eb885c4c-d77a-54c7-8dc9-f1e1927b6eeb",
+        "rank":"Silver 3",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 28, 2022 at 18:07 GMT+8",
+        "matchid":"4070a963-dca4-421f-aaef-885d14a44574",
+        "score":"13-11",
+        "agent":"Astra",
+        "headshot":25,
+        "kda":[
+            15,
+            16,
+            8,
+            0.9
+        ],
+        "adr":126
+    },
+    {
+        "account":{
+            "name":"abu",
+            "tag":"001"
+        },
+        "puuid":"eb885c4c-d77a-54c7-8dc9-f1e1927b6eeb",
+        "rank":"Silver 3",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 28, 2022 at 18:07 GMT+8",
+        "matchid":"4070a963-dca4-421f-aaef-885d14a44574",
+        "score":"13-11",
+        "agent":"Astra",
+        "headshot":25,
+        "kda":[
+            15,
+            16,
+            8,
+            0.9
+        ],
+        "adr":126
+    },
+    {
+        "account":{
+            "name":"abu",
+            "tag":"001"
+        },
         "rank":"Silver 3",
         "map":"Haven",
         "mode":"Competitive",
