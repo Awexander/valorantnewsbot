@@ -1,52 +1,69 @@
+import discord 
+from discord.ext import commands
+from src.CONFIG import BLUE
+from src.matches import getmatchinfo
+from src.utils import utils
+import datetime as dt
+import os
 
-@bot.command()
-async def id(ctx):
-    return await _log('[SERVER]',f'Channel ID: {ctx.channel.id}')
+class command(commands.Cog):
+    def __init__(self, bot):
+        self.region = 'ap'
+        self.matches = getmatchinfo()
+        self.matchinfo = self.matches.matchlist
+        self.utils = utils(bot)
+        
+        self.path = os.getcwd()
+        self.startTime = dt.datetime.now()
 
-@bot.command()
-async def uptime(ctx):
-    upSeconds = dt.datetime.now() - startTime
-    connSeconds = dt.datetime.now() - connectionTime
+    @commands.command()
+    async def id(self, ctx):
+        return await self.utils.SERVER(f'Channel ID: {ctx.channel.id}')
+
+    @commands.command()
+    async def uptime(self, ctx):
+        upSeconds = dt.datetime.now() - self.startTime
+        connSeconds = dt.datetime.now() - self.connectionTime
+        
+        embed = discord.Embed(title='[SERVER]', color=BLUE)
+        embed.add_field(name='SERVER TIME', value=await self.utils.TIME(upSeconds), inline=False)
+        embed.add_field(name='BOT TIME', value=await self.utils.TIME(connSeconds), inline=False)
+
+        await self.utils.LOG(embed)
+
+    @commands.command()
+    async def update(self, ctx):
+        update, maintenance, incidents  = await self.utils.readprevdata()
+        return await self.utils.SERVER(f"Latest update: {update['title']} \n Updated at: {update['date']}")
+
+    @commands.command()
+    async def match(self, ctx, *,valorantid):
+        #TODO: get lastmatch from db not from api
+        nametag = valorantid.split('#')
+        result , error= await self.matches.getmatches(nametag[0], nametag[1])
+        if result is True:
+            content = {
+            'puuid':self.matchinfo.puuid,
+            'map':self.matchinfo.map, 
+            'mode':self.matchinfo.gamemode, 
+            'timeplayed': self.matchinfo.matchdate,
+            'matchid': self.matchinfo.matchid,
+            'score':f'{self.matchinfo.roundWon}-{self.matchinfo.roundLost}', 
+            'agent':self.matchinfo.agent,
+            'headshot':int(round(self.matchinfo.headshot)),
+            'kda':self.matchinfo.kda,
+            'adr':int(round(self.matchinfo.adr))
+            }
+            await self.utils.report(message=f"**{nametag[0].upper()}#{nametag[1].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
+        else:
+            await self.utils.ERROR(f'error loading latest match data \n {error}')
+
+    @commands.command()
+    async def setregion(self, ctx, *, region):
+        self.matches.region = region
+        return await self.utils.SERVER(f'Changed region to: {self.matches.region}')
     
-    embed = discord.Embed(title='[SERVER]', color=0x02aefd)
-    embed.add_field(name='SERVER TIME', value=await _getTimeElapsed(upSeconds), inline=False)
-    embed.add_field(name='BOT TIME', value=await _getTimeElapsed(connSeconds), inline=False)
-
-    await _sendlog(embed)
-
-async def _sendlog(embed):
-    channel = bot.get_channel(logchannel)
-    return await channel.send(embed=embed)
-
-@bot.command()
-async def update(ctx):
-    message = await _readjson()
-    return await _log('[SERVER]', f"Latest update: {message['updates']['title']} \n Updated at: {message['updates']['date']}")
-
-@bot.listen()
-async def on_command_error(ctx, error):
-    return await _log('[ERROR]', f'{error}')
-
-@bot.command()
-async def lastmatch(ctx, *,valorantid):
-    #TODO: get lastmatch from db not from api
-    nametag = valorantid.split('#')
-    result , error= await matchupdate.getmatches(nametag[0], nametag[1])
-    if result is True:
-        content = {
-        'map':matchupdate.match.map, 
-        'mode':matchupdate.match.gamemode, 
-        'score':f'{matchupdate.match.roundWon}-{matchupdate.match.roundLost}', 
-        'agent':matchupdate.match.agent,
-        'headshot':int(round(matchupdate.match.headshot)),
-        'kda':matchupdate.match.kda,
-        'adr':int(round(matchupdate.match.adr))
-        }
-        await _log('[REPORT]',message=f'**{valorantid.upper()}** \n Rank: {matchupdate.match.rank}',type='match', content=content)
-    else:
-        await _log('[ERROR]', f'error loading latest match data \n {error}')
-
-@bot.command()
-async def region(ctx, *, region):
-    matchupdate.region = region
-    return await _log('[SERVER]', f'Changed region to: {region}')
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await ctx.message.delete(delay=1)
+        return await self.utils.ERROR(f'{error}')
