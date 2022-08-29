@@ -79,57 +79,59 @@ class task():
             await self.utils.ERROR(message=f'error loading ids \n error')
         
         for id in ids:
-            result, error = await self.match.getmatches(name=id['name'], tag=id['tag'])
+            try:
+                result, error = await self.match.getmatches(name=id['name'], tag=id['tag'])
 
-            content = []
-            if result is True:
-                if self.matchinfo.matchid != id['matchid']:
-                    id['matchid'] = self.matchinfo.matchid
-                    content = {
-                        'account': {
-                            'name':id['name'], 
-                            'tag':id['tag']
-                        },
-                        'puuid':self.matchinfo.puuid,
-                        'rank':self.matchinfo.rank,
-                        'map':self.matchinfo.map, 
-                        'mode':self.matchinfo.gamemode, 
-                        'timeplayed': self.matchinfo.matchdate,
-                        'matchid': self.matchinfo.matchid,
-                        'score':f'{self.matchinfo.roundWon}-{self.matchinfo.roundLost}', 
-                        'agent':self.matchinfo.agent,
-                        'headshot':int(round(self.matchinfo.headshot)),
-                        'kda':self.matchinfo.kda,
-                        'adr':int(round(self.matchinfo.adr))
-                    }
-                    await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
-                
-                    if self.matchinfo.rank != id['rank']:
-                        await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
-                        id['rank'] = self.matchinfo.rank
-                        
-                    try:
-                        matchlist = []
-                        with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
-                            matchlist = json.loads(r.read())
-                        
-                        matchlist.insert(0, content)
+                content = []
+                if result is True:
+                    if self.matchinfo.matchid != id['matchid']:
+                        id['matchid'] = self.matchinfo.matchid
+                        content = {
+                            'account': {
+                                'name':id['name'], 
+                                'tag':id['tag']
+                            },
+                            'puuid':self.matchinfo.puuid,
+                            'rank':self.matchinfo.rank,
+                            'map':self.matchinfo.map, 
+                            'mode':self.matchinfo.gamemode, 
+                            'timeplayed': self.matchinfo.matchdate,
+                            'matchid': self.matchinfo.matchid,
+                            'score':f'{self.matchinfo.roundWon}-{self.matchinfo.roundLost}', 
+                            'agent':self.matchinfo.agent,
+                            'headshot':int(round(self.matchinfo.headshot)),
+                            'kda':self.matchinfo.kda,
+                            'adr':int(round(self.matchinfo.adr))
+                        }
+                        await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
+                    
+                        if self.matchinfo.rank != id['rank']:
+                            await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
+                            id['rank'] = self.matchinfo.rank
+                            
                         try:
-                            with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'w') as w:
-                                json.dump(matchlist, w, indent=4, separators=[',',':'])
-                        except:
-                            await self.utils.ERROR(message=f'error appending matchlist data \n {error}')
-                        
-                        try:
-                            with open(self.path+f'{SLASH}data{SLASH}accounts.json', 'w') as w:
-                                json.dump(ids, w, indent=4, separators=[',',':'])
+                            matchlist = []
+                            with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
+                                matchlist = json.loads(r.read())
+                            
+                            matchlist.insert(0, content)
+                            try:
+                                with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'w') as w:
+                                    json.dump(matchlist, w, indent=4, separators=[',',':'])
+                            except:
+                                await self.utils.ERROR(message=f'error appending matchlist data \n {error}')
+                            
+                            try:
+                                with open(self.path+f'{SLASH}data{SLASH}accounts.json', 'w') as w:
+                                    json.dump(ids, w, indent=4, separators=[',',':'])
+                            except Exception as error:
+                                await self.utils.ERROR(f'error update accounts.json \n {error}')
                         except Exception as error:
-                            await self.utils.ERROR(f'error update accounts.json \n {error}')
-                    except Exception as error:
-                        await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
-            else:
-                await self.utils.ERROR(f"Error request match data {id['name']}#{id['tag']} \n Error code: {error}")
-
+                            await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
+                else:
+                    await self.utils.ERROR(f"Error request match data {id['name']}#{id['tag']} \n Error code: {error}")
+            except Exception as error:
+                await self.utils.ERROR(f"error requesting match data for {id['name']}#{id['tag']}\n {error}")
     async def _getstatusData(data):
         for locale in data[0]['titles']:
             if locale['locale'] == 'en_US':
