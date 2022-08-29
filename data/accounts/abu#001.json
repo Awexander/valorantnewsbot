@@ -6,6 +6,28 @@
         },
         "puuid":"eb885c4c-d77a-54c7-8dc9-f1e1927b6eeb",
         "rank":"Silver 3",
+        "map":"Haven",
+        "mode":"Competitive",
+        "timeplayed":"August 28, 2022 at 21:05 GMT+8",
+        "matchid":"1b3f24e8-36d2-42d5-9583-5dafae39ffab",
+        "score":"11-13",
+        "agent":"KAY/O",
+        "headshot":28,
+        "kda":[
+            24,
+            15,
+            7,
+            1.6
+        ],
+        "adr":255
+    },
+    {
+        "account":{
+            "name":"abu",
+            "tag":"001"
+        },
+        "puuid":"eb885c4c-d77a-54c7-8dc9-f1e1927b6eeb",
+        "rank":"Silver 3",
         "map":"Fracture",
         "mode":"Competitive",
         "timeplayed":"August 28, 2022 at 18:07 GMT+8",

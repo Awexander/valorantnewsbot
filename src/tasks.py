@@ -5,6 +5,7 @@ import aiohttp
 from .matches import getmatchinfo as match
 from .utils import utils
 from src.CONFIG import BLUE, SLASH
+import random
 import json
 import os
 
@@ -15,6 +16,8 @@ class task():
         self.bot = bot
         self.utils = utils(bot)
         self.region = self.match.region
+        self.matchtime = dt.datetime.now().timestamp()
+        self.looptime = dt.datetime.now().timestamp()
 
         self.updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
         self.statusURL = f'https://api.henrikdev.xyz/valorant/v1/status/{self.region}'
@@ -22,116 +25,122 @@ class task():
         self.path = os.getcwd()
         pass
 
-    @tasks.loop(seconds=20)
+    @tasks.loop(seconds=1)
     async def loop(self):
-        updateData = await self._requestsupdates(self.updateURL)
-        maintenanceData, incidentData = await self._requestsupdates(self.statusURL)
-        isNeed_Append = 'None'
+        delay = random.randrange(20,50)
+        if dt.datetime.now().timestamp() - self.looptime >= delay:
+            self.looptime = dt.datetime.now().timestamp()
+            updateData = await self._requestsupdates(self.updateURL)
+            maintenanceData, incidentData = await self._requestsupdates(self.statusURL)
+            isNeed_Append = 'None'
 
-        if updateData['status'] == 200:
-            latestPatch = await self.readPatch(updateData)
-            if latestPatch['title'] != self.prevUpdate['title'] and latestPatch != None:
-                self.prevUpdate = latestPatch
-                if latestPatch['external_link'] != None:
-                    link = latestPatch['external_link']
-                else:
-                    link = latestPatch['url']
-                
-                isNeed_Append = 'patch'
-                await self.utils.BOT(f'new update is available')
-                message= f"**GAME UPDATE** \n\n {latestPatch['title']} \n\n {link}"
-                await self._sendNotification(message, isNeed_Append, latestPatch, self.prevMaintenance, self.prevIncidents)
-        else:
-            await self.utils.ERROR(f"Processing updates data \nError code: {updateData['status']}")
-
-        try:
-            if bool (maintenanceData):
-                currMaintenance = await self._getstatusData(maintenanceData)
-                if currMaintenance['id'] != prevMaintenance['id'] and currMaintenance != None:
-                    prevMaintenance = currMaintenance
-
-                    isNeed_Append = 'maintenance'
-                    await self.utils.BOT(f'new maintenances updated')
-                    message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
-                    await self._sendNotification(message, isNeed_Append, self.prevUpdate, currMaintenance, self.prevIncidents)
-        except:
-            await self.utils.ERROR(f"Processing maintenances data \nError code: {maintenanceData['status']}")
-
-        try:
-            if bool(incidentData):
-                currIncident = await self._getstatusData(incidentData) 
-                if currIncident['id'] != prevIncidents['id'] and currIncident != None:
-                    prevIncidents = currIncident
+            if updateData['status'] == 200:
+                latestPatch = await self.readPatch(updateData)
+                if latestPatch['title'] != self.prevUpdate['title'] and latestPatch != None:
+                    self.prevUpdate = latestPatch
+                    if latestPatch['external_link'] != None:
+                        link = latestPatch['external_link']
+                    else:
+                        link = latestPatch['url']
                     
-                    isNeed_Append = 'incident'
-                    await self.utils.BOT(f'new incidents updated')
-                    message= f"**STATUS UPDATE**\n\n**{currIncident['severity'].upper()}: {currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
-                    await self._sendNotification(message, isNeed_Append, self.prevUpdate, self.prevMaintenance, currIncident)
-        except:
-            await self.utils.ERROR(f"Processing incidents data \nError code: {incidentData['status']}")
+                    isNeed_Append = 'patch'
+                    await self.utils.BOT(f'new update is available')
+                    message= f"**GAME UPDATE** \n\n {latestPatch['title']} \n\n {link}"
+                    await self._sendNotification(message, isNeed_Append, latestPatch, self.prevMaintenance, self.prevIncidents)
+            else:
+                await self.utils.ERROR(f"Processing updates data \nError code: {updateData['status']}")
 
-    @tasks.loop(minutes=20)
-    async def getMatchReport(self):
-        try:
-            with open(self.path + f'{SLASH}data{SLASH}accounts.json', 'r') as r:
-                ids = json.loads(r.read())
-        except Exception as error:
-            await self.utils.ERROR(message=f'error loading ids \n error')
-        
-        for id in ids:
             try:
-                result, error = await self.match.getmatches(name=id['name'], tag=id['tag'])
+                if bool (maintenanceData):
+                    currMaintenance = await self._getstatusData(maintenanceData)
+                    if currMaintenance['id'] != prevMaintenance['id'] and currMaintenance != None:
+                        prevMaintenance = currMaintenance
 
-                content = []
-                if result is True:
-                    if self.matchinfo.matchid != id['matchid']:
-                        id['matchid'] = self.matchinfo.matchid
-                        content = {
-                            'account': {
-                                'name':id['name'], 
-                                'tag':id['tag']
-                            },
-                            'puuid':self.matchinfo.puuid,
-                            'rank':self.matchinfo.rank,
-                            'map':self.matchinfo.map, 
-                            'mode':self.matchinfo.gamemode, 
-                            'timeplayed': self.matchinfo.matchdate,
-                            'matchid': self.matchinfo.matchid,
-                            'score':f'{self.matchinfo.roundWon}-{self.matchinfo.roundLost}', 
-                            'agent':self.matchinfo.agent,
-                            'headshot':int(round(self.matchinfo.headshot)),
-                            'kda':self.matchinfo.kda,
-                            'adr':int(round(self.matchinfo.adr))
-                        }
-                        await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
-                    
-                        if self.matchinfo.rank != id['rank']:
-                            await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
-                            id['rank'] = self.matchinfo.rank
-                            
-                        try:
-                            matchlist = []
-                            with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
-                                matchlist = json.loads(r.read())
-                            
-                            matchlist.insert(0, content)
-                            try:
-                                with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'w') as w:
-                                    json.dump(matchlist, w, indent=4, separators=[',',':'])
-                            except:
-                                await self.utils.ERROR(message=f'error appending matchlist data \n {error}')
-                            
-                            try:
-                                with open(self.path+f'{SLASH}data{SLASH}accounts.json', 'w') as w:
-                                    json.dump(ids, w, indent=4, separators=[',',':'])
-                            except Exception as error:
-                                await self.utils.ERROR(f'error update accounts.json \n {error}')
-                        except Exception as error:
-                            await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
-                else:
-                    await self.utils.ERROR(f"Error request match data {id['name']}#{id['tag']} \n Error code: {error}")
+                        isNeed_Append = 'maintenance'
+                        await self.utils.BOT(f'new maintenances updated')
+                        message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                        await self._sendNotification(message, isNeed_Append, self.prevUpdate, currMaintenance, self.prevIncidents)
+            except:
+                await self.utils.ERROR(f"Processing maintenances data \nError code: {maintenanceData['status']}")
+
+            try:
+                if bool(incidentData):
+                    currIncident = await self._getstatusData(incidentData) 
+                    if currIncident['id'] != prevIncidents['id'] and currIncident != None:
+                        prevIncidents = currIncident
+                        
+                        isNeed_Append = 'incident'
+                        await self.utils.BOT(f'new incidents updated')
+                        message= f"**STATUS UPDATE**\n\n**{currIncident['severity'].upper()}: {currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                        await self._sendNotification(message, isNeed_Append, self.prevUpdate, self.prevMaintenance, currIncident)
+            except:
+                await self.utils.ERROR(f"Processing incidents data \nError code: {incidentData['status']}")
+
+    @tasks.loop(seconds = 2)
+    async def getMatchReport(self):
+        if dt.datetime.now().timestamp() - self.matchtime >= random.randrange(600,1200):
+            self.matchtime = dt.datetime.now().timestamp()
+            try:
+                with open(self.path + f'{SLASH}data{SLASH}accounts.json', 'r') as r:
+                    ids = json.loads(r.read())
             except Exception as error:
-                await self.utils.ERROR(f"error requesting match data for {id['name']}#{id['tag']}\n {error}")
+                await self.utils.ERROR(message=f'error loading ids \n error')
+            
+            for id in ids:
+                try:
+                    result, error = await self.match.getmatches(name=id['name'], tag=id['tag'])
+
+                    content = []
+                    if result is True:
+                        if self.matchinfo.matchid != id['matchid']:
+                            id['matchid'] = self.matchinfo.matchid
+                            content = {
+                                'account': {
+                                    'name':id['name'], 
+                                    'tag':id['tag']
+                                },
+                                'puuid':self.matchinfo.puuid,
+                                'rank':self.matchinfo.rank,
+                                'map':self.matchinfo.map, 
+                                'mode':self.matchinfo.gamemode, 
+                                'timeplayed': self.matchinfo.matchdate,
+                                'matchid': self.matchinfo.matchid,
+                                'score':f'{self.matchinfo.roundWon}-{self.matchinfo.roundLost}', 
+                                'agent':self.matchinfo.agent,
+                                'headshot':int(round(self.matchinfo.headshot)),
+                                'kda':self.matchinfo.kda,
+                                'adr':int(round(self.matchinfo.adr))
+                            }
+                            await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
+                        
+                            if self.matchinfo.rank != id['rank']:
+                                await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
+                                id['rank'] = self.matchinfo.rank
+                                
+                            try:
+                                matchlist = []
+                                with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
+                                    matchlist = json.loads(r.read())
+                                
+                                matchlist.insert(0, content)
+                                try:
+                                    with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'w') as w:
+                                        json.dump(matchlist, w, indent=4, separators=[',',':'])
+                                except:
+                                    await self.utils.ERROR(message=f'error appending matchlist data \n {error}')
+                                
+                                try:
+                                    with open(self.path+f'{SLASH}data{SLASH}accounts.json', 'w') as w:
+                                        json.dump(ids, w, indent=4, separators=[',',':'])
+                                except Exception as error:
+                                    await self.utils.ERROR(f'error update accounts.json \n {error}')
+                            except Exception as error:
+                                await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
+                    else:
+                        await self.utils.ERROR(f"Error request match data {id['name']}#{id['tag']} \n Error code: {error}")
+                except Exception as error:
+                    await self.utils.ERROR(f"error requesting match data for {id['name']}#{id['tag']}\n {error}")
+
     async def _getstatusData(data):
         for locale in data[0]['titles']:
             if locale['locale'] == 'en_US':
