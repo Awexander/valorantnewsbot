@@ -4,6 +4,7 @@ import datetime as dt
 import aiohttp
 from .matches import getmatchinfo as match
 from .utils import utils
+from .reportcard import reportcard
 from src.CONFIG import BLUE, SLASH
 import random
 import json
@@ -18,6 +19,7 @@ class task():
         self.region = self.match.region
         self.matchtime = dt.datetime.now().timestamp()
         self.looptime = dt.datetime.now().timestamp()
+        self.reportcard = reportcard()
 
         self.updateURL = 'https://api.henrikdev.xyz/valorant/v1/website/en-us'
         self.statusURL = f'https://api.henrikdev.xyz/valorant/v1/status/{self.region}'
@@ -92,8 +94,8 @@ class task():
 
                     content = []
                     if result is True:
-                        if self.matchinfo.matchid != id['matchid']:
-                            id['matchid'] = self.matchinfo.matchid
+                        if self.matchinfo.matchid not in set(id['matchid']) and self.matchinfo.puuid == id['puuid']:
+                            id['matchid'].append(self.matchinfo.matchid)
                             content = {
                                 'account': {
                                     'name':id['name'], 
@@ -116,30 +118,43 @@ class task():
                             if self.matchinfo.rank != id['rank']:
                                 await self.utils.report(message=f"**{id['name'].upper()}#{id['tag'].upper()}**", type='rank', content={'prevRank':id['rank'], 'currRank':self.matchinfo.rank})
                                 id['rank'] = self.matchinfo.rank
-                                
-                            try:
-                                matchlist = []
-                                with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
-                                    matchlist = json.loads(r.read())
-                                
-                                matchlist.insert(0, content)
-                                try:
-                                    with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'w') as w:
-                                        json.dump(matchlist, w, indent=4, separators=[',',':'])
-                                except:
-                                    await self.utils.ERROR(message=f'error appending matchlist data \n {error}')
-                                
-                                try:
-                                    with open(self.path+f'{SLASH}data{SLASH}accounts.json', 'w') as w:
-                                        json.dump(ids, w, indent=4, separators=[',',':'])
-                                except Exception as error:
-                                    await self.utils.ERROR(f'error update accounts.json \n {error}')
-                            except Exception as error:
-                                await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
+                            
+                            img = await self._savefullmatch()
+                            await self._savematchreport(content, id, ids)
+                            await self.utils.SENDIMAGE(img)
                     else:
                         await self.utils.ERROR(f"Error request match data {id['name']}#{id['tag']} \n Error code: {error}")
                 except Exception as error:
                     await self.utils.ERROR(f"error requesting match data for {id['name']}#{id['tag']}\n {error}")
+
+    async def _savefullmatch(self):
+        matchreport = await self.match.fullmatch()
+        
+        with open(f"data/match/{matchreport['matchid']}.json", 'w') as w:
+            json.dump(matchreport, w, indent=4, separators=[',',':'])
+
+        return await self.reportcard.card(matchreport)
+
+    async def _savematchreport(self, data, id, ids):
+        try:
+            matchlist = []
+            with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'r') as r:
+                matchlist = json.loads(r.read())
+            
+            matchlist.insert(0, data)
+            try:
+                with open(self.path+f"{SLASH}data{SLASH}accounts{SLASH}{id['name']}#{id['tag']}.json", 'w') as w:
+                    json.dump(matchlist, w, indent=4, separators=[',',':'])
+            except:
+                await self.utils.ERROR(message=f'error appending matchlist data \n {error}')
+            
+            try:
+                with open(self.path+f'{SLASH}data{SLASH}accounts.json', 'w') as w:
+                    json.dump(ids, w, indent=4, separators=[',',':'])
+            except Exception as error:
+                await self.utils.ERROR(f'error update accounts.json \n {error}')
+        except Exception as error:
+            await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
 
     async def _getstatusData(data):
         for locale in data[0]['titles']:

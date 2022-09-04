@@ -7,6 +7,7 @@ from src.CONFIG import (
     RED,
     BLUE,
     REPORTCHANNEL,
+    REPORTCARDCHANNEL,
     SLASH
 )
 import os
@@ -17,6 +18,7 @@ class utils():
         self.bot = bot
         self.lastmessage = ''
         pass
+
     async def readprevdata(self):
         try:
             path = os.getcwd()
@@ -62,6 +64,9 @@ class utils():
     async def REPORT(self, embed=discord.Embed):
         return await self.bot.get_channel(REPORTCHANNEL).send(embed=embed)
     
+    async def SENDIMAGE(self, image):
+        return await self.bot.get_channel(REPORTCARDCHANNEL).send(file=discord.File(f"data/match/reportcard/{image}.png"))
+        
     async def RANK(self, embed=discord.Embed):
         return await self.bot.get_channel(RANKCHANNEL).send(embed=embed)
 

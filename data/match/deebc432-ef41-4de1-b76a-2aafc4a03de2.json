@@ -1,0 +1,182 @@
+{
+    "matchid":"deebc432-ef41-4de1-b76a-2aafc4a03de2",
+    "map":"Ascent",
+    "result":{
+        "red":13,
+        "blue":11
+    },
+    "gamemode":"Competitive",
+    "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+    "players":[
+        {
+            "puuid":"44889c5e-4e1a-5df9-b079-c4dfb7287d65",
+            "name":"Shelby",
+            "tag":"6958",
+            "team":"Red",
+            "rank":"Platinum 2",
+            "agent":"Chamber",
+            "acs":324,
+            "headshot":17,
+            "kda":[
+                27,
+                15,
+                3,
+                1.8
+            ],
+            "adr":201
+        },
+        {
+            "puuid":"97163cf7-3dbc-5724-97aa-610a7556c91e",
+            "name":"Ohma Tokita",
+            "tag":"RENZO",
+            "team":"Red",
+            "rank":"Gold 2",
+            "agent":"Fade",
+            "acs":199,
+            "headshot":28,
+            "kda":[
+                17,
+                20,
+                7,
+                0.8
+            ],
+            "adr":147
+        },
+        {
+            "puuid":"b46ca4b2-3eab-5667-a6c1-bdc3a0e82f22",
+            "name":"hiok2",
+            "tag":"4300",
+            "team":"Blue",
+            "rank":"Gold 2",
+            "agent":"Raze",
+            "acs":220,
+            "headshot":8,
+            "kda":[
+                17,
+                21,
+                8,
+                0.8
+            ],
+            "adr":130
+        },
+        {
+            "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+            "name":"belangsukawa",
+            "tag":"1001",
+            "team":"Blue",
+            "rank":"Platinum 2",
+            "agent":"Omen",
+            "acs":202,
+            "headshot":16,
+            "kda":[
+                17,
+                17,
+                8,
+                1.0
+            ],
+            "adr":132
+        },
+        {
+            "puuid":"a9be9368-dd06-5d7c-9f2d-245d9de9072e",
+            "name":"kimsj",
+            "tag":"vkoo",
+            "team":"Red",
+            "rank":"Gold 1",
+            "agent":"Sage",
+            "acs":106,
+            "headshot":22,
+            "kda":[
+                9,
+                17,
+                10,
+                0.5
+            ],
+            "adr":59
+        },
+        {
+            "puuid":"463d16d8-2cf5-5730-ae98-fef0419c100a",
+            "name":"Bubuseyo",
+            "tag":"4064",
+            "team":"Blue",
+            "rank":"Platinum 1",
+            "agent":"Cypher",
+            "acs":160,
+            "headshot":20,
+            "kda":[
+                12,
+                15,
+                8,
+                0.8
+            ],
+            "adr":112
+        },
+        {
+            "puuid":"44252fa4-4c98-5d7d-9525-f04355c809b5",
+            "name":"Jangan Hack",
+            "tag":"paeh",
+            "team":"Blue",
+            "rank":"Gold 3",
+            "agent":"Sova",
+            "acs":308,
+            "headshot":17,
+            "kda":[
+                27,
+                19,
+                7,
+                1.4
+            ],
+            "adr":219
+        },
+        {
+            "puuid":"9b78c5b9-3e3e-5fbc-ac82-2c4d6523fd17",
+            "name":"GenAlFateh",
+            "tag":"Nyan",
+            "team":"Blue",
+            "rank":"Platinum 1",
+            "agent":"Skye",
+            "acs":195,
+            "headshot":17,
+            "kda":[
+                15,
+                19,
+                12,
+                0.8
+            ],
+            "adr":120
+        },
+        {
+            "puuid":"e9df5cae-e49a-5366-b7e3-ae32eae80330",
+            "name":"CHUTCHU TA",
+            "tag":"BNKAI",
+            "team":"Red",
+            "rank":"Platinum 2",
+            "agent":"Reyna",
+            "acs":239,
+            "headshot":23,
+            "kda":[
+                19,
+                20,
+                4,
+                0.9
+            ],
+            "adr":146
+        },
+        {
+            "puuid":"e577e165-2907-5216-a373-892008e78d24",
+            "name":"kalampag lolo",
+            "tag":"1010",
+            "team":"Red",
+            "rank":"Platinum 1",
+            "agent":"Brimstone",
+            "acs":242,
+            "headshot":17,
+            "kda":[
+                19,
+                16,
+                6,
+                1.2
+            ],
+            "adr":162
+        }
+    ]
+}

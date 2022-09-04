@@ -44,6 +44,7 @@ class getmatchinfo():
             self.matchlist.map = await self._getmap()
             self.matchlist.gamemode = await self._getGameMode()
             self.matchlist.matchdate = await self._getmatchdate()
+
             self.matchstats = await self._getstats()
             self.matchlist.agent = await self._getAgent()
             self.matchlist.rank = await self._getRank()
@@ -57,6 +58,37 @@ class getmatchinfo():
         except:
             False, matches['status']
 
+    async def fullmatch(self):
+        data = []
+        players = await self._getplayers()
+        for player in players:
+            self.matchstats = player
+            playerData = {
+                "puuid": player['puuid'],
+                "name": player['name'],
+                "tag": player['tag'], 
+                "team": player['team'],
+                "rank": player['currenttier_patched'],
+                "agent": player['character'],
+                "acs": await self._getacs(),
+                "headshot": await self._getHeadshot(),
+                "kda": await self._getkda(),
+                "adr": await self._getadr()
+            }
+            data.append(playerData)
+        match = {
+            "matchid": await self._getMatchID(),
+            "map": await self._getmap(),
+            "result": {
+                "red": await self._getTeamResult('red'),
+                "blue": await self._getTeamResult('blue')
+            },
+            "gamemode": await self._getGameMode(),
+            "timeplayed": await self._getmatchdate(),
+            "players": data
+        }
+        return match
+
     async def _getMatchID(self):
         return self.matches['metadata']['matchid']
 
@@ -67,7 +99,6 @@ class getmatchinfo():
         return self.matches['metadata']['mode']
     
     async def _getmatchdate(self):
-        #TODO: UNIX time
         timestamp = dt.datetime.fromtimestamp(self.matches['metadata']['game_start'])
         return timestamp.strftime("%B %d, %Y at %H:%M GMT+8")
     
@@ -76,6 +107,9 @@ class getmatchinfo():
             if stats['name'].lower() == self._name.lower() and stats['tag'].lower() == self._tag.lower():
                 self.matchlist.puuid = stats['puuid']
                 return stats
+
+    async def _getplayers(self):
+        return self.matches['players']['all_players']
 
     async def _getAgent(self):
         return self.matchstats['character']
@@ -87,14 +121,20 @@ class getmatchinfo():
         team = self.matchstats['team'].lower()
         return self.matches['teams'][team]['rounds_won'], self.matches['teams'][team]['rounds_lost']
 
+    async def _getTeamResult(self, team):
+        return self.matches['teams'][team.lower()]['rounds_won']
+    
+    async def _getacs(self):
+        return int(round(self.matchstats['stats']['score'] / self.matches['metadata']['rounds_played']))
+
     async def _getHeadshot(self):
-        return (self.matchstats['stats']['headshots'] / (self.matchstats['stats']['headshots'] + self.matchstats['stats']['bodyshots'] + self.matchstats['stats']['legshots'])) * 100
+        return int(round((self.matchstats['stats']['headshots'] / (self.matchstats['stats']['headshots'] + self.matchstats['stats']['bodyshots'] + self.matchstats['stats']['legshots'])) * 100))
 
     async def _getkda(self):
         return [self.matchstats['stats']['kills'], self.matchstats['stats']['deaths'], self.matchstats['stats']['assists'], float(round(self.matchstats['stats']['kills'] / self.matchstats['stats']['deaths'],1))]
     
     async def _getadr(self):
-        return self.matchstats['damage_made'] / self.matches['metadata']['rounds_played']
+        return int(round(self.matchstats['damage_made'] / self.matches['metadata']['rounds_played']))
     
     class _latestmatch():
         def __init__(self, puuid, matchid, map, mode, matchdate, agent, rank, roundWon, roundLost, headshot, kda, adr):
