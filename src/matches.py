@@ -29,16 +29,16 @@ class getmatchinfo():
                 async with session.get(url) as resp:
                     matches = await resp.json()
                     if matches['status'] == 200:
-                        self.matches = []
+                        self.matches = {}
                         for data in matches['data']:
                             if data['metadata']['mode'] == 'Competitive':
                                 self.matches = data
                                 break
 
-                        if self.matches == []:
-                            return None, f"{name}#{tag} didn't play any competitive yet"
+                        if self.matches == {}:
+                            return f"{name}#{tag} didn't play any competitive yet"
                     else:
-                        False, matches['status']
+                        return matches
 
             self.matchlist.matchid = await self._getMatchID()
             self.matchlist.map = await self._getmap()
@@ -53,10 +53,10 @@ class getmatchinfo():
             self.matchlist.kda = await self._getkda()
             self.matchlist.adr = await self._getadr()
             
-            return True, None
+            return None
             
         except:
-            False, matches['status']
+            return matches
 
     async def fullmatch(self):
         data = []
@@ -115,7 +115,15 @@ class getmatchinfo():
         return self.matchstats['character']
 
     async def _getRank(self):
-        return self.matchstats['currenttier_patched']
+        url = f"https://api.henrikdev.xyz/valorant/v1/mmr/{self.region}/{self._name}/{self._tag}"
+        async with aiohttp.ClientSession(aiohttp.ClientTimeout(timeout=aiohttp.ClientTimeout)) as session:
+            async with session.get(url) as response:
+                resp = await response.json()
+
+                if resp.get('status') != 200:
+                    return resp.get('status')
+                
+                return resp.get('data').get('currenttierpatched')
 
     async def _getMatchResult(self):
         team = self.matchstats['team'].lower()

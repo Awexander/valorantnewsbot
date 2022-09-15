@@ -40,8 +40,9 @@ class command(commands.Cog):
     async def match(self, ctx, *,valorantid):
         #TODO: get lastmatch from db not from api
         nametag = valorantid.split('#')
-        result , error= await self.matches.getmatches(nametag[0], nametag[1])
-        if result is True:
+        result = await self.matches.getmatches(nametag[0], nametag[1])
+        print(type(result))
+        if result is None:
             content = {
             'puuid':self.matchinfo.puuid,
             'map':self.matchinfo.map, 
@@ -56,7 +57,7 @@ class command(commands.Cog):
             }
             await self.utils.report(message=f"**{nametag[0].upper()}#{nametag[1].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
         else:
-            await self.utils.ERROR(f'error loading latest match data \n {error}')
+            await self.utils.ERROR(f"error loading latest match data \n {result.get('status')}: {result.get('errors')[0].get('message')}")
 
     @commands.command()
     async def setregion(self, ctx, *, region):
