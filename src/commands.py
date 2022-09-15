@@ -9,7 +9,7 @@ import os
 class command(commands.Cog):
     def __init__(self, bot):
         self.region = 'ap'
-        self.matches = getmatchinfo()
+        self.matches = getmatchinfo(bot)
         self.matchinfo = self.matches.matchlist
         self.utils = utils(bot)
         
@@ -41,8 +41,7 @@ class command(commands.Cog):
         #TODO: get lastmatch from db not from api
         nametag = valorantid.split('#')
         result = await self.matches.getmatches(nametag[0], nametag[1])
-        print(type(result))
-        if result is None:
+        if result is True:
             content = {
             'puuid':self.matchinfo.puuid,
             'map':self.matchinfo.map, 
@@ -56,8 +55,6 @@ class command(commands.Cog):
             'adr':int(round(self.matchinfo.adr))
             }
             await self.utils.report(message=f"**{nametag[0].upper()}#{nametag[1].upper()}** \n Rank: {self.matchinfo.rank}",type='match', content=content)
-        else:
-            await self.utils.ERROR(f"error loading latest match data \n {result.get('status')}: {result.get('errors')[0].get('message')}")
 
     @commands.command()
     async def setregion(self, ctx, *, region):

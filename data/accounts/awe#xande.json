@@ -4,6 +4,28 @@
             "name":"awe",
             "tag":"xande"
         },
+        "puuid":"3775800c-67e6-598a-aab8-cde1d5f02f2f",
+        "rank":"Platinum 2",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"September 04, 2022 at 22:47 GMT+8",
+        "matchid":"7ba337ad-5ce9-4b27-a0a9-ac3437ee5adc",
+        "score":"14-14",
+        "agent":"Sage",
+        "headshot":26,
+        "kda":[
+            30,
+            20,
+            7,
+            1.5
+        ],
+        "adr":206
+    },
+    {
+        "account":{
+            "name":"awe",
+            "tag":"xande"
+        },
         "rank":"Unrated",
         "map":"Breeze",
         "mode":"Competitive",

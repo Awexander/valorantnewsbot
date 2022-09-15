@@ -1,9 +1,11 @@
 
 import aiohttp
 import datetime as dt
+from src.utils import utils
 
 class getmatchinfo():
-    def __init__(self):
+    def __init__(self, bot):
+        self.utils = utils(bot)
         self.region = 'ap'
         self.matchlist = self._latestmatch(
             puuid=None,
@@ -20,26 +22,11 @@ class getmatchinfo():
             adr=None)
         pass
         
-    async def getmatches(self, name, tag, timeout=30):
+    async def getmatches(self, name, tag):
         self._name = name
         self._tag = tag
-        url = f'https://api.henrikdev.xyz/valorant/v3/matches/{self.region}/{name}/{tag}'
+        self.matches = await self._request(name, tag)
         try:
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(timeout)) as session:
-                async with session.get(url) as resp:
-                    matches = await resp.json()
-                    if matches['status'] == 200:
-                        self.matches = {}
-                        for data in matches['data']:
-                            if data['metadata']['mode'] == 'Competitive':
-                                self.matches = data
-                                break
-
-                        if self.matches == {}:
-                            return f"{name}#{tag} didn't play any competitive yet"
-                    else:
-                        return matches
-
             self.matchlist.matchid = await self._getMatchID()
             self.matchlist.map = await self._getmap()
             self.matchlist.gamemode = await self._getGameMode()
@@ -53,10 +40,23 @@ class getmatchinfo():
             self.matchlist.kda = await self._getkda()
             self.matchlist.adr = await self._getadr()
             
-            return None
-            
+            return True
         except:
-            return matches
+            await self.utils.ERROR(f"requesting data for {name}#{tag} \n {self.matches['status']}: {self.matches['errors'][0]['message']}")
+            return False
+
+
+    async def _request(self, name, tag):
+        url = f'https://api.henrikdev.xyz/valorant/v3/matches/{self.region}/{name}/{tag}'
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(30)) as session:
+            async with session.get(url) as resp:
+                matches = await resp.json()
+                if matches['status'] == 200:
+                    for data in matches['data']:
+                        if data['metadata']['mode'] == 'Competitive':
+                            return data
+                else:
+                    return matches
 
     async def fullmatch(self):
         data = []
@@ -116,7 +116,7 @@ class getmatchinfo():
 
     async def _getRank(self):
         url = f"https://api.henrikdev.xyz/valorant/v1/mmr/{self.region}/{self._name}/{self._tag}"
-        async with aiohttp.ClientSession(aiohttp.ClientTimeout(timeout=aiohttp.ClientTimeout)) as session:
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(30)) as session:
             async with session.get(url) as response:
                 resp = await response.json()
 
