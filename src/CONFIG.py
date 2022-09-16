@@ -10,3 +10,25 @@ BLUE    = 0x02AEFD
 
 BOT_TOKEN = ''
 SLASH = "/"
+
+NOMATCHPLAYED = {
+  "status": 201,
+  "errors": [
+    {
+      "message": "not played any competitive match yet",
+      "code": 0,
+      "details": "cannot get competitive match data from api call or api did not have any match data for this account"
+    }
+  ]
+}
+
+SUCCESMATCH = {
+  "status": 200,
+  "errors": [
+    {
+      "message": "successfully parse match data from api call ",
+      "code": 0,
+      "details": ""
+    }
+  ]
+}

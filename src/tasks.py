@@ -12,7 +12,7 @@ import os
 
 class task():
     def __init__(self, bot) -> None:
-        self.match = match(bot)
+        self.match = match()
         self.matchinfo = self.match.matchlist
         self.bot = bot
         self.utils = utils(bot)
@@ -93,7 +93,7 @@ class task():
                     result = await self.match.getmatches(name=id['name'], tag=id['tag'])
 
                     content = []
-                    if result is True:
+                    if result.get('status') == 200:
                         if self.matchinfo.matchid not in set(id['matchid']) and self.matchinfo.puuid == id['puuid']:
                             id['matchid'].append(self.matchinfo.matchid)
                             content = {
@@ -122,6 +122,8 @@ class task():
                             img = await self._savefullmatch()
                             await self._savematchreport(content, id, ids)
                             await self.utils.SENDIMAGE(img)
+                    else:
+                        await self.utils.ERROR(f"requesting data for {id['name']}#{id['tag']} \n {result['status']}: {result['errors'][0]['message']}")
                 except Exception as error:
                     await self.utils.ERROR(f"error requesting match data for {id['name']}#{id['tag']}\n {error}")
 

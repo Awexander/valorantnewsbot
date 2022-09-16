@@ -1,11 +1,10 @@
 
 import aiohttp
 import datetime as dt
-from src.utils import utils
+from src.CONFIG import NOMATCHPLAYED, SUCCESMATCH
 
 class getmatchinfo():
-    def __init__(self, bot):
-        self.utils = utils(bot)
+    def __init__(self):
         self.region = 'ap'
         self.matchlist = self._latestmatch(
             puuid=None,
@@ -40,10 +39,9 @@ class getmatchinfo():
             self.matchlist.kda = await self._getkda()
             self.matchlist.adr = await self._getadr()
             
-            return True
+            return SUCCESMATCH
         except:
-            await self.utils.ERROR(f"requesting data for {name}#{tag} \n {self.matches['status']}: {self.matches['errors'][0]['message']}")
-            return False
+            return self.matches
 
 
     async def _request(self, name, tag):
@@ -55,6 +53,8 @@ class getmatchinfo():
                     for data in matches['data']:
                         if data['metadata']['mode'] == 'Competitive':
                             return data
+                        else:
+                            return NOMATCHPLAYED
                 else:
                     return matches
 
