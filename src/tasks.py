@@ -31,6 +31,7 @@ class task():
     async def loop(self):
         delay = random.randrange(20,50)
         if dt.datetime.now().timestamp() - self.looptime >= delay:
+            print('tasks for updates')
             self.looptime = dt.datetime.now().timestamp()
             updateData = await self._requestsupdates(self.updateURL)
             maintenanceData, incidentData = await self._requestsupdates(self.statusURL)
@@ -80,7 +81,7 @@ class task():
 
     @tasks.loop(seconds = 2)
     async def getMatchReport(self):
-        if dt.datetime.now().timestamp() - self.matchtime >= random.randrange(600,1200):
+        if dt.datetime.now().timestamp() - self.matchtime >= random.randrange(1,1200):
             self.matchtime = dt.datetime.now().timestamp()
             try:
                 with open(self.path + f'{SLASH}data{SLASH}accounts.json', 'r') as r:
@@ -156,7 +157,7 @@ class task():
         except Exception as error:
             await self.utils.ERROR(f"error loading {id['name']}#{id['tag']}.json \n {error}")
 
-    async def _getstatusData(data):
+    async def _getstatusData(self, data):
         for locale in data[0]['titles']:
             if locale['locale'] == 'en_US':
                 incident = locale['content']
