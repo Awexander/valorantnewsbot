@@ -6,6 +6,28 @@
         },
         "puuid":"eb885c4c-d77a-54c7-8dc9-f1e1927b6eeb",
         "rank":"Gold 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 22, 2022 at 23:29 GMT+8",
+        "matchid":"46aca1eb-4cf6-4af2-a4ea-903952836115",
+        "score":"7-13",
+        "agent":"Astra",
+        "headshot":14,
+        "kda":[
+            20,
+            14,
+            6,
+            1.4
+        ],
+        "adr":231
+    },
+    {
+        "account":{
+            "name":"abu",
+            "tag":"001"
+        },
+        "puuid":"eb885c4c-d77a-54c7-8dc9-f1e1927b6eeb",
+        "rank":"Gold 2",
         "map":"Pearl",
         "mode":"Competitive",
         "timeplayed":"September 16, 2022 at 02:13 GMT+8",

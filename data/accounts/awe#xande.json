@@ -6,6 +6,28 @@
         },
         "puuid":"3775800c-67e6-598a-aab8-cde1d5f02f2f",
         "rank":"Platinum 2",
+        "map":"Icebox",
+        "mode":"Competitive",
+        "timeplayed":"September 25, 2022 at 18:27 GMT+8",
+        "matchid":"78272a10-0aa8-488b-adc3-d93b53cd800c",
+        "score":"13-11",
+        "agent":"Sage",
+        "headshot":11,
+        "kda":[
+            29,
+            17,
+            17,
+            1.7
+        ],
+        "adr":208
+    },
+    {
+        "account":{
+            "name":"awe",
+            "tag":"xande"
+        },
+        "puuid":"3775800c-67e6-598a-aab8-cde1d5f02f2f",
+        "rank":"Platinum 2",
         "map":"Fracture",
         "mode":"Competitive",
         "timeplayed":"September 04, 2022 at 22:47 GMT+8",
