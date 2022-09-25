@@ -56,8 +56,8 @@ class task():
             try:
                 if bool (maintenanceData):
                     currMaintenance = await self._getstatusData(maintenanceData)
-                    if currMaintenance['id'] != prevMaintenance['id'] and currMaintenance != None:
-                        prevMaintenance = currMaintenance
+                    if currMaintenance['id'] != self.prevMaintenance['id'] and currMaintenance != None:
+                        self.prevMaintenance = currMaintenance
 
                         isNeed_Append = 'maintenance'
                         await self.utils.BOT(f'new maintenances updated')
@@ -69,8 +69,8 @@ class task():
             try:
                 if bool(incidentData):
                     currIncident = await self._getstatusData(incidentData) 
-                    if currIncident['id'] != prevIncidents['id'] and currIncident != None:
-                        prevIncidents = currIncident
+                    if currIncident['id'] != self.prevIncidents['id'] and currIncident != None:
+                        self.prevIncidents = currIncident
                         
                         isNeed_Append = 'incident'
                         await self.utils.BOT(f'new incidents updated')
