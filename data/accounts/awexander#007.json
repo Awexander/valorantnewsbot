@@ -4,6 +4,297 @@
             "name":"awexander",
             "tag":"007"
         },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 2",
+        "map":"Icebox",
+        "mode":"Competitive",
+        "timeplayed":"September 22, 2022 at 22:39 GMT+8",
+        "matchid":"ae36524e-16cf-479d-bc4d-56fa0d246449",
+        "score":"13-8",
+        "agent":"Chamber",
+        "headshot":11,
+        "kda":[
+            26,
+            12,
+            7,
+            2.2
+        ],
+        "adr":255
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Pearl",
+        "mode":"Competitive",
+        "timeplayed":"September 15, 2022 at 22:31 GMT+8",
+        "matchid":"da06bc8f-1366-4198-af0e-389976a61093",
+        "score":"13-5",
+        "agent":"Viper",
+        "headshot":34,
+        "kda":[
+            13,
+            11,
+            6,
+            1.2
+        ],
+        "adr":145
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":"96bbc5be-0687-4632-9923-6f58d18889b7",
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":"96bbc5be-0687-4632-9923-6f58d18889b7",
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":"96bbc5be-0687-4632-9923-6f58d18889b7",
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":[
+            "96bbc5be-0687-4632-9923-6f58d18889b7"
+        ],
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":[
+            "96bbc5be-068-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7"
+        ],
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":[
+            "96bbc5be-068-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7"
+        ],
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":[
+            "96bbc5be-068-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7"
+        ],
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":[
+            "96bbc5be-068-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7"
+        ],
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":[
+            "96bbc5be-068-9923-6f58d18889b7",
+            "96bbc5be-0687-4632-9923-6f58d18889b7"
+        ],
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
+        "puuid":"37e126d2-58fb-5922-9542-c4aec97e9834",
+        "rank":"Diamond 1",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"August 31, 2022 at 19:05 GMT+8",
+        "matchid":"96bbc5be-0687-4632-9923-6f58d18889b7",
+        "score":"10-13",
+        "agent":"Sage",
+        "headshot":15,
+        "kda":[
+            7,
+            18,
+            5,
+            0.4
+        ],
+        "adr":96
+    },
+    {
+        "account":{
+            "name":"awexander",
+            "tag":"007"
+        },
         "rank":"Unrated",
         "map":"Ascent",
         "mode":"Competitive",

@@ -1,0 +1,106 @@
+[
+    {
+        "rank": "Unrated",
+        "image": "assets/ranks/Unranked.png"
+    },
+    {
+        "rank": "Iron 1",
+        "image": "assets/ranks/Iron1.png"
+    },
+    {
+        "rank": "Iron 2",
+        "image": "assets/ranks/Iron2.png"
+    },
+    {
+        "rank": "Iron 3",
+        "image": "assets/ranks/Iron3.png"
+    },
+    {
+        "rank": "Bronze 1",
+        "image": "assets/ranks/Bronze1.png"
+    },
+    {
+        "rank": "Bronze 2",
+        "image": "assets/ranks/Bronze2.png"
+    },
+    {
+        "rank": "Bronze 3",
+        "image": "assets/ranks/Bronze3.png"
+    },
+    {
+        "rank": "Silver 1",
+        "image": "assets/ranks/Silver1.png"
+    },
+    {
+        "rank": "Silver 2",
+        "image": "assets/ranks/Silver2.png"
+    },
+    {
+        "rank": "Silver 3",
+        "image": "assets/ranks/Silver3.png"
+    },
+    {
+        "rank": "Gold 1",
+        "image": "assets/ranks/Gold1.png"
+    },
+    {
+        "rank": "Gold 2",
+        "image": "assets/ranks/Gold2.png"
+    },
+    {
+        "rank": "Gold 3",
+        "image": "assets/ranks/Gold3.png"
+    },
+    {
+        "rank": "Platinum 1",
+        "image": "assets/ranks/Platinum1.png"
+    },
+    {
+        "rank": "Platinum 2",
+        "image": "assets/ranks/Platinum2.png"
+    },
+    {
+        "rank": "Platinum 3",
+        "image": "assets/ranks/Platinum3.png"
+    },
+    {
+        "rank": "Diamond 1",
+        "image": "assets/ranks/Diamond1.png"
+    },
+    {
+        "rank": "Diamond 2",
+        "image": "assets/ranks/Diamond2.png"
+    },
+    {
+        "rank": "Diamond 3",
+        "image": "assets/ranks/Diamond3.png"
+    },
+    {
+        "rank": "Ascendant 1",
+        "image": "assets/ranks/Ascendant1.png"
+    },
+    {
+        "rank": "Ascendant 2",
+        "image": "assets/ranks/Ascendant2.png"
+    },
+    {
+        "rank": "Ascendant 3",
+        "image": "assets/ranks/Ascendant3.png"
+    },
+    {
+        "rank": "Immortal 1",
+        "image": "assets/ranks/Immortal1.png"
+    },
+    {
+        "rank": "Immortal 2",
+        "image": "assets/ranks/Immortal2.png"
+    },
+    {
+        "rank": "Immortal 3",
+        "image": "assets/ranks/Immortal3.png"
+    },
+    {
+        "rank": "Radiant",
+        "image": "assets/ranks/Radiant.png"
+    }
+]

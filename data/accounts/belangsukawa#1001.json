@@ -6,6 +6,253 @@
         },
         "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
         "rank":"Platinum 2",
+        "map":"Fracture",
+        "mode":"Competitive",
+        "timeplayed":"September 24, 2022 at 16:56 GMT+8",
+        "matchid":"93818b7f-63b6-46d4-9708-e25dd8c8745b",
+        "score":"13-3",
+        "agent":"Astra",
+        "headshot":19,
+        "kda":[
+            21,
+            5,
+            5,
+            4.2
+        ],
+        "adr":209
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Bind",
+        "mode":"Competitive",
+        "timeplayed":"September 14, 2022 at 21:57 GMT+8",
+        "matchid":"8c96192f-ae36-40a1-9ac6-39c8e799895a",
+        "score":"13-9",
+        "agent":"Chamber",
+        "headshot":12,
+        "kda":[
+            18,
+            15,
+            6,
+            1.2
+        ],
+        "adr":143
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+        "matchid":"deebc432-ef41-4de1-b76a-2aafc4a03de2",
+        "score":"11-13",
+        "agent":"Omen",
+        "headshot":16,
+        "kda":[
+            17,
+            17,
+            8,
+            1.0
+        ],
+        "adr":132
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+        "matchid":[
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2"
+        ],
+        "score":"11-13",
+        "agent":"Omen",
+        "headshot":16,
+        "kda":[
+            17,
+            17,
+            8,
+            1.0
+        ],
+        "adr":132
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+        "matchid":[
+            "b700a0da-aeed84ee-75fb17ff8405",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2"
+        ],
+        "score":"11-13",
+        "agent":"Omen",
+        "headshot":16,
+        "kda":[
+            17,
+            17,
+            8,
+            1.0
+        ],
+        "adr":132
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+        "matchid":[
+            "b700a0da-aeed84ee-75fb17ff8405",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2"
+        ],
+        "score":"11-13",
+        "agent":"Omen",
+        "headshot":16,
+        "kda":[
+            17,
+            17,
+            8,
+            1.0
+        ],
+        "adr":132
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+        "matchid":[
+            "b700a0da-aeed84ee-75fb17ff8405",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2"
+        ],
+        "score":"11-13",
+        "agent":"Omen",
+        "headshot":16,
+        "kda":[
+            17,
+            17,
+            8,
+            1.0
+        ],
+        "adr":132
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+        "matchid":[
+            "b700a0da-aeed84ee-75fb17ff8405",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2"
+        ],
+        "score":"11-13",
+        "agent":"Omen",
+        "headshot":16,
+        "kda":[
+            17,
+            17,
+            8,
+            1.0
+        ],
+        "adr":132
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"September 03, 2022 at 01:19 GMT+8",
+        "matchid":[
+            "b700a0da-aeed84ee-75fb17ff8405",
+            "deebc432-ef41-4de1-b76a-2aafc4a03de2"
+        ],
+        "score":"11-13",
+        "agent":"Omen",
+        "headshot":16,
+        "kda":[
+            17,
+            17,
+            8,
+            1.0
+        ],
+        "adr":132
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
+        "map":"Ascent",
+        "mode":"Competitive",
+        "timeplayed":"August 28, 2022 at 02:58 GMT+8",
+        "matchid":"b700a0da-aeed-49b3-84ee-75fb17ff8405",
+        "score":"16-14",
+        "agent":"Astra",
+        "headshot":23,
+        "kda":[
+            20,
+            14,
+            4,
+            1.4
+        ],
+        "adr":160
+    },
+    {
+        "account":{
+            "name":"belangsukawa",
+            "tag":"1001"
+        },
+        "puuid":"084441aa-2e43-5a45-a160-8ee2bea06188",
+        "rank":"Platinum 2",
         "map":"Icebox",
         "mode":"Competitive",
         "timeplayed":"August 27, 2022 at 17:10 GMT+8",

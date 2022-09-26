@@ -26,7 +26,7 @@ async def on_ready():
     await bot.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.listening, 
-            name=" raspberrypi "
+            name=" valorant matches "
             )
         )
 
