@@ -62,7 +62,7 @@ class task():
                         self.prevMaintenance = currMaintenance
 
                         isNeed_Append = 'maintenance'
-                        self.isThere_Maintenance = False
+                        self.isThere_Maintenance = True
                         await self.utils.BOT(f'new maintenances updated')
                         message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
                         await self._sendNotification(message, isNeed_Append, self.prevUpdate, currMaintenance, self.prevIncidents)
