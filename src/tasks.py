@@ -25,6 +25,8 @@ class task():
         self.statusURL = f'https://api.henrikdev.xyz/valorant/v1/status/{self.region}'
         self.prevUpdate, self.prevMaintenance, self.prevIncidents = [],[],[]
         self.path = os.getcwd()
+        self.isThere_Incidents = False
+        self.isThere_Maintenance = False
         pass
 
     @tasks.loop(seconds=1)
@@ -60,9 +62,17 @@ class task():
                         self.prevMaintenance = currMaintenance
 
                         isNeed_Append = 'maintenance'
+                        self.isThere_Maintenance = False
                         await self.utils.BOT(f'new maintenances updated')
                         message= f"**MAINTENANCE UPDATE**\n\n**{currMaintenance['status'].upper()}: {currMaintenance['title']}**\n{currMaintenance['content']} \n\nUpdated at: {currMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
                         await self._sendNotification(message, isNeed_Append, self.prevUpdate, currMaintenance, self.prevIncidents)
+                else:
+                    if self.isThere_Maintenance != False:
+                        isNeed_Append = 'maintenance'
+                        self.isThere_Maintenance = False
+                        await self.utils.BOT(f'incidents resolved.')
+                        message= f"**STATUS UPDATE**\n\n**MAINTENANCE RESOLVED: {self.prevMaintenance['title']}**\n{self.prevMaintenance['content']} \n\nUpdated at: {self.prevMaintenance['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                        await self._sendNotification(message, isNeed_Append, self.prevUpdate, self.prevMaintenance, self.prevIncidents)
             except:
                 await self.utils.ERROR(f"Processing maintenances data \nError code: {maintenanceData['status']}")
 
@@ -73,9 +83,17 @@ class task():
                         self.prevIncidents = currIncident
                         
                         isNeed_Append = 'incident'
+                        self.isThere_Incidents = True
                         await self.utils.BOT(f'new incidents updated')
                         message= f"**STATUS UPDATE**\n\n**{currIncident['severity'].upper()}: {currIncident['title']}**\n{currIncident['content']} \n\nUpdated at: {currIncident['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
                         await self._sendNotification(message, isNeed_Append, self.prevUpdate, self.prevMaintenance, currIncident)
+                else:
+                    if self.isThere_Incidents != False:
+                        isNeed_Append = 'incident'
+                        self.isThere_Incidents = False
+                        await self.utils.BOT(f'incidents resolved.')
+                        message= f"**STATUS UPDATE**\n\n**INCIDENTS RESOLVED: {self.prevIncidents['title']}**\n{self.prevIncidents['content']} \n\nUpdated at: {self.prevIncidents['time']}\nMore info: https://status.riotgames.com/valorant?region=ap&locale=en_US"
+                        await self._sendNotification(message, isNeed_Append, self.prevUpdate, self.prevMaintenance, self.prevIncidents)
             except:
                 await self.utils.ERROR(f"Processing incidents data \nError code: {incidentData['status']}")
 
