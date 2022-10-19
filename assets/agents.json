@@ -112,5 +112,11 @@
         "uuid": "7f94d92c-4234-0a36-9646-3a87eb8b5c89",
         "small": "assets/agents/small/yoru.png",
         "mvp": "assets/agents/mvp/yoru.png"
+    },
+    {
+        "agentName": "Harbor",
+        "uuid": "95b78ed7-4637-86d9-7e41-71ba8c293152",
+        "small": "assets/agents/small/harbor.png",
+        "mvp": "assets/agents/mvp/harbor.png"
     }
 ]
