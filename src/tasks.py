@@ -3,6 +3,7 @@ from discord.ext import tasks
 import datetime as dt
 import aiohttp
 from .matches import getmatchinfo as match
+from src.database.valorantdb import database
 from .utils import utils
 from .reportcard import reportcard
 from src.CONFIG import BLUE, SLASH
@@ -16,6 +17,7 @@ class task():
         self.matchinfo = self.match.matchlist
         self.bot = bot
         self.utils = utils(bot)
+        self.db = database()
         self.region = self.match.region
         self.matchtime = dt.datetime.now().timestamp()
         self.looptime = dt.datetime.now().timestamp()
@@ -33,7 +35,6 @@ class task():
     async def loop(self):
         delay = random.randrange(20,50)
         if dt.datetime.now().timestamp() - self.looptime >= delay:
-            print('tasks for updates')
             self.looptime = dt.datetime.now().timestamp()
             updateData = await self._requestsupdates(self.updateURL)
             maintenanceData, incidentData = await self._requestsupdates(self.statusURL)
@@ -151,7 +152,8 @@ class task():
         
         with open(f"data/match/{matchreport['matchid']}.json", 'w') as w:
             json.dump(matchreport, w, indent=4, separators=[',',':'])
-
+        
+        self.db.savematch(matchreport)
         return await self.reportcard.card(matchreport)
 
     async def _savematchreport(self, data, id, ids):
