@@ -1,8 +1,6 @@
 
 from .mysql import mysql
 from .config import basedata
-import os
-import json
 
 class database:
     def __init__(self):
