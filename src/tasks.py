@@ -111,10 +111,10 @@ class task():
             for id in ids:
                 try:
                     result = await self.match.getmatches(name=id['name'], tag=id['tag'])
-
                     content = []
                     if result.get('status') == 200:
                         if self.matchinfo.matchid not in set(id['matchid']) and self.matchinfo.puuid == id['puuid']:
+                            await self.match.processmatch()
                             id['matchid'].append(self.matchinfo.matchid)
                             content = {
                                 'account': {
@@ -143,7 +143,7 @@ class task():
                             await self._savematchreport(content, id, ids)
                             await self.utils.SENDIMAGE(img)
                     else:
-                        await self.utils.ERROR(f"requesting data for {id['name']}#{id['tag']} \n {result['status']}: {result['errors'][0]['message']}")
+                        await self.utils.ERROR(f"requesting data for {id['name']}#{id['tag']} \n {result['status']}: {result['errors']['message']}")
                 except Exception as error:
                     await self.utils.ERROR(f"error requesting match data for {id['name']}#{id['tag']}\n {error}")
 
